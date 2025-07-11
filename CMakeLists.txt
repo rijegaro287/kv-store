@@ -47,5 +47,16 @@ target_include_directories(test_kv_store PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc
 
 target_include_directories(kv_store PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+target_compile_definitions(unity PUBLIC
+  UNITY_INCLUDE_DOUBLE
+  UNITY_DOUBLE_PRECISION=1e-15
+)
+
 target_link_libraries(test_kv_store PRIVATE logger unity)
 target_link_libraries(kv_store PRIVATE logger)
+
+enable_testing()
+
+add_test(NAME kv_store_tests
+         COMMAND test_kv_store
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

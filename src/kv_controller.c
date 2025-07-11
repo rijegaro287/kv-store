@@ -5,6 +5,11 @@ extern db_t *create_db(uint8_t *storage_type) {
     logger(3, "Error: storage_type parameter is NULL\n");
     return NULL;
   }
+
+  if (strlen(storage_type) == 0) {
+    logger(3, "Error: storage_type parameter is empty\n");
+    return NULL;
+  }
   
   db_t *db = malloc(sizeof(db_t));
   if (db == NULL) {
@@ -12,10 +17,11 @@ extern db_t *create_db(uint8_t *storage_type) {
     return NULL;
   }
   strncpy(db->storage_type, storage_type, SM_BUFFER_SIZE);
+  db->storage_type[SM_BUFFER_SIZE-1] = '\0';
+
 
   if(strcmp(storage_type, KV_STORAGE_STRUCTURE_LIST) == 0) {
     db->storage = create_list();
-
   }
   else if(strcmp(storage_type, KV_STORAGE_STRUCTURE_HASH) == 0) {
     db->storage = create_hash_table(KV_STORAGE_HASH_SIZE);
@@ -36,6 +42,11 @@ extern db_t *create_db(uint8_t *storage_type) {
 extern int64_t load_db(db_t *db, uint8_t *file_path) {
   if (db == NULL || file_path == NULL) {
     logger(3, "Error: NULL pointer passed to load_db\n");
+    return -1;
+  }
+
+  if (strlen(file_path) == 0) {
+    logger(3, "Error: Empty string passed to load_db\n");
     return -1;
   }
   
@@ -73,6 +84,11 @@ extern int64_t save_db(db_t *db, uint8_t *file_path) {
     return -1;
   }
   
+  if (strlen(file_path) == 0) {
+    logger(3, "Error: Empty string passed to save_db\n");
+    return -1;
+  }
+
   uint8_t tmp_path[BG_BUFFER_SIZE];
   snprintf(tmp_path, BG_BUFFER_SIZE, "%s.tmp", file_path);
   tmp_path[BG_BUFFER_SIZE - 1] = '\0';
@@ -139,6 +155,11 @@ extern int64_t put_entry(db_t *db, uint8_t *key, uint8_t *value, uint8_t *type) 
     logger(3, "Error: NULL pointer passed to put_entry\n");
     return -1;
   }
+
+  if (strlen(key) == 0 || strlen(value) == 0 || strlen(type) == 0) {
+    logger(3, "Error: Empty string passed to put_entry\n");
+    return -1;
+  }
   
   uint64_t result;
   if (strcmp(db->storage_type, KV_STORAGE_STRUCTURE_LIST) == 0) {
@@ -164,6 +185,11 @@ extern int64_t delete_entry(db_t *db, uint8_t *key) {
     logger(3, "Error: NULL pointer passed to delete_entry\n");
     return -1;
   }
+
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to delete_entry\n");
+    return -1;
+  }
   
   uint64_t result;
   if (strcmp(db->storage_type, KV_STORAGE_STRUCTURE_LIST) == 0) {
@@ -187,6 +213,11 @@ extern int64_t delete_entry(db_t *db, uint8_t *key) {
 extern db_entry_t* get_entry(db_t *db, uint8_t *key) {
   if (db == NULL || key == NULL) {
     logger(3, "Error: NULL pointer passed to get_entry\n");
+    return NULL;
+  }
+
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to get_entry\n");
     return NULL;
   }
   

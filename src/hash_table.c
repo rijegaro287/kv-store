@@ -6,6 +6,11 @@ static int64_t calculate_hash_code(uint8_t *key, uint64_t size) {
     return -1;
   }
 
+  if (strlen(key) == 0) {
+    logger(3, "Error: key parameter is empty\n");
+    return -1;
+  }
+
   int64_t hash_code = 0;
   
   uint8_t idx = 0;
@@ -69,6 +74,11 @@ extern int64_t hash_put(hash_table_t *hash, uint8_t *key, uint8_t* value, uint8_
     logger(3, "Error: NULL pointer passed to hash_put\n");
     return -1;
   }
+
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to hash_put\n");
+    return -1;
+  }
   
   int64_t hash_code = calculate_hash_code(key, hash->size);
   if (hash_code < 0) {
@@ -77,7 +87,7 @@ extern int64_t hash_put(hash_table_t *hash, uint8_t *key, uint8_t* value, uint8_
   list_t *list = hash->content[hash_code];
   db_entry_t *entry = list_get_entry_by_key(list, key);
   if (entry != NULL) {
-    if (update_entry(entry, key, value, type)) {
+    if (update_entry(entry, value, type)) {
       logger(3, "Error: Failed to update an entry\n");
       return -1;
     }
@@ -102,6 +112,11 @@ extern int64_t hash_delete(hash_table_t *hash, uint8_t *key) {
     logger(3, "Error: NULL pointer passed to hash_delete\n");
     return -1;
   }
+
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to hash_delete\n");
+    return -1;
+  }
   
   int64_t hash_code = calculate_hash_code(key, hash->size);
   if (hash_code < 0) {
@@ -114,6 +129,11 @@ extern int64_t hash_delete(hash_table_t *hash, uint8_t *key) {
 extern db_entry_t *hash_get_entry(hash_table_t *hash, uint8_t *key) {
   if (hash == NULL || key == NULL) {
     logger(3, "Error: NULL pointer passed to hash_get_entry\n");
+    return NULL;
+  }
+
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to hash_get_entry\n");
     return NULL;
   }
   

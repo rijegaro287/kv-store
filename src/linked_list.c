@@ -64,7 +64,7 @@ extern int64_t list_put(list_t* list, uint8_t* key, uint8_t* value, uint8_t* typ
   
   db_entry_t *entry = list_get_entry_by_key(list, key);
   if (entry != NULL) {
-    if (update_entry(entry, key, value, type)) {
+    if (update_entry(entry, value, type)) {
       logger(3, "Error: Failed to update an entry\n");
       return -1;
     }
@@ -90,6 +90,11 @@ extern int64_t list_delete(list_t* list, uint8_t *key) {
     return -1;
   }
   
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to list_delete\n");
+    return -1;
+  }
+
   node_t* previous_node = NULL;
   node_t* current_node = list->head;
   while (current_node != NULL) {
@@ -135,6 +140,11 @@ extern db_entry_t *list_get_entry_by_idx(list_t* list, uint64_t idx) {
 extern db_entry_t *list_get_entry_by_key(list_t* list, uint8_t *key) {
   if (list == NULL || key == NULL) {
     logger(3, "Error: NULL pointer passed to list_get_entry_by_key\n");
+    return NULL;
+  }
+
+  if (strlen(key) == 0) {
+    logger(3, "Error: Empty string passed to list_get_entry_by_key\n");
     return NULL;
   }
   

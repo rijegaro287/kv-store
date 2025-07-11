@@ -5,6 +5,11 @@ static int64_t set_integer_value(db_entry_t *dest, uint8_t *str_value, uint64_t 
     logger(3, "Error: NULL pointer passed to set_integer_value\n");
     return -1;
   }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to set_integer_value\n");
+    return -1;
+  }
   
   uint64_t value;
   if (str_to_int64(str_value, &value) < 0) {
@@ -45,6 +50,11 @@ static int64_t set_float_value(db_entry_t *dest, uint8_t *str_value) {
     logger(3, "Error: NULL pointer passed to set_float_value\n");
     return -1;
   }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to set_float_value\n");
+    return -1;
+  }
   
   float value;
   if (str_to_float(str_value, &value) < 0) {
@@ -66,6 +76,11 @@ static int64_t set_float_value(db_entry_t *dest, uint8_t *str_value) {
 static int64_t set_double_value(db_entry_t *dest, uint8_t *str_value) {
   if (dest == NULL || str_value == NULL) {
     logger(3, "Error: NULL pointer passed to set_double_value\n");
+    return -1;
+  }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to set_double_value\n");
     return -1;
   }
   
@@ -91,6 +106,11 @@ static int64_t set_bool_value(db_entry_t *dest, uint8_t *str_value) {
     logger(3, "Error: NULL pointer passed to set_bool_value\n");
     return -1;
   }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to set_bool_value\n");
+    return -1;
+  }
   
   bool value;
   if (str_to_bool(str_value, &value) < 0) {
@@ -114,6 +134,11 @@ static int64_t set_string_value(db_entry_t *dest, uint8_t *str_value) {
     logger(3, "Error: NULL pointer passed to set_string_value\n");
     return -1;
   }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to set_string_value\n");
+    return -1;
+  }
   
   uint64_t str_len = strlen(str_value);
   dest->value = calloc(str_len + 1, sizeof(uint8_t));
@@ -132,9 +157,15 @@ extern int64_t set_entry_value(db_entry_t *dest, uint8_t *str_value) {
     logger(3, "Error: NULL pointer passed to set_entry_value\n");
     return -1;
   }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to set_entry_value\n");
+    return -1;
+  }
   
+  void *prev_value = NULL;
   if (dest->value != NULL) {
-    free(dest->value);
+    prev_value = dest->value;
     dest->value = NULL;
   }
 
@@ -166,15 +197,44 @@ extern int64_t set_entry_value(db_entry_t *dest, uint8_t *str_value) {
     break;
   default:
     logger(3, "Error: data type %ld is not a valid datatype.\n", dest->type);
-    return -1;
+    result = -1;
+    break;
   }
 
   if (result < 0) {
     logger(3, "Error: Failed to set entry value\n");
+    dest->value = prev_value;
     return -1;
   }
 
+  free(prev_value);
+
   return result;
+}
+
+extern int64_t update_entry(db_entry_t *entry, uint8_t* value, uint8_t* type) {
+  if (entry == NULL || value == NULL || type == NULL) {
+    logger(3, "Error: NULL pointer passed to update_entry\n");
+    return -1;
+  }
+  
+  if (strlen(value) == 0 || strlen(type) == 0) {
+    logger(3, "Error: Empty string passed to update_entry\n");
+    return -1;
+  }
+
+  entry->type = map_datatype_from_str(type);
+  if (entry->type < 0) {
+    logger(3, "Error: Failed to map datatype\n");
+    return -1;
+  }
+
+  if (set_entry_value(entry, value) < 0) {
+    logger(4, "Error: Failed to update entry\n");
+    return -1;
+  }
+
+  return 0;
 }
 
 extern db_entry_t* create_entry(uint8_t *key, uint8_t *value, uint8_t *type) {
@@ -182,8 +242,13 @@ extern db_entry_t* create_entry(uint8_t *key, uint8_t *value, uint8_t *type) {
     logger(3, "Error: NULL pointer passed to create_entry\n");
     return NULL;
   }
+
+  if (strlen(key) == 0 || strlen(value) == 0 || strlen(type) == 0) {
+    logger(3, "Error: Empty string passed to create_entry\n");
+    return NULL;
+  }
   
- db_entry_t *entry = malloc(sizeof(db_entry_t));
+  db_entry_t *entry = malloc(sizeof(db_entry_t));
   if (entry == NULL) {
     logger(3, "Error: failed to allocated memory for database entry\n");
     return NULL;
@@ -192,6 +257,7 @@ extern db_entry_t* create_entry(uint8_t *key, uint8_t *value, uint8_t *type) {
   entry->type = map_datatype_from_str(type);
   entry->value = NULL;
   strncpy(entry->key, key, SM_BUFFER_SIZE);
+  entry->key[SM_BUFFER_SIZE-1] = '\0';
   if (set_entry_value(entry, value) < 0) {
     logger(3, "Error: Failed to create entry with key \"%s\"\n", key);
     return NULL;
@@ -213,6 +279,11 @@ extern db_entry_t* parse_line(uint8_t *line) {
     logger(3, "Error: NULL pointer passed to parse_line\n");
     return NULL;
   }
+
+  if (strlen(line) == 0) {
+    logger(3, "Error: Empty string passed to parse_line\n");
+    return NULL;
+  }
   
   if (strcmp(line, "\n") == 0 || line[0] == '#') return NULL;  
   uint8_t *type, *key, *value;
@@ -231,24 +302,6 @@ extern db_entry_t* parse_line(uint8_t *line) {
   return entry;
 }
 
-extern int64_t update_entry(db_entry_t *entry, uint8_t* key, uint8_t* value, uint8_t* type) {
-  if (entry == NULL || key == NULL || value == NULL || type == NULL) {
-    logger(3, "Error: NULL pointer passed to update_entry\n");
-    return -1;
-  }
-  
-  if (strlen(type) > 0) { 
-    entry->type = map_datatype_from_str(type);
-  }
-
-  if (set_entry_value(entry, value) < 0) {
-    logger(4, "Error: Failed to update entry with key \"%s\"\n", key);
-    return -1;
-  }
-
-  return 0;
-}
-
 extern void parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len) {
   if (entry == NULL || dest == NULL) {
     logger(3, "Error: NULL pointer passed to parse_entry\n");
@@ -260,8 +313,9 @@ extern void parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len) {
   uint8_t value[SM_BUFFER_SIZE];
 
   map_datatype_to_str(entry->type, type, SM_BUFFER_SIZE);
-  strncpy(key, entry->key, SM_BUFFER_SIZE);
   map_value_to_str(entry->type, entry->value, value, SM_BUFFER_SIZE);
+  strncpy(key, entry->key, SM_BUFFER_SIZE);
+  key[SM_BUFFER_SIZE-1] = '\0';
 
   snprintf(dest, max_len, "%s%s%s%s%s%s", type,
                                           KV_PARSER_TYPE_DELIMITER,

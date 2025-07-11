@@ -6,6 +6,11 @@ extern int64_t map_datatype_from_str(uint8_t *type) {
     return -1;
   }
 
+  if (strlen(type) == 0) {
+    logger(3, "Error: Empty string passed to map_datatype_from_str\n");
+    return -1;
+  }
+
   if (strcmp(type, INT8_TYPE_STR) == 0) return INT8_TYPE;
   else if (strcmp(type, INT16_TYPE_STR) == 0) return INT16_TYPE;
   else if (strcmp(type, INT32_TYPE_STR) == 0) return INT32_TYPE;
@@ -55,7 +60,7 @@ extern void map_datatype_to_str(uint64_t type, uint8_t *dest, uint64_t max_len) 
     dest[0] = '\0';
     return;
   }
-  dest[max_len - 1] = '\0';
+  dest[max_len-1] = '\0';
 }
 
 extern void map_value_to_str(uint64_t type, void *value, uint8_t *dest, uint64_t max_len) {
@@ -102,6 +107,11 @@ extern int64_t str_to_int64(uint8_t *str_value, int64_t *dest) {
     return -1;
   }
 
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to str_to_int64\n");
+    return -1;
+  }
+
   errno = 0;
   uint8_t *end;
   int64_t int_value = strtoll(str_value, (char**)&end, 10);
@@ -123,6 +133,11 @@ extern int64_t str_to_int64(uint8_t *str_value, int64_t *dest) {
 extern int64_t str_to_float(uint8_t *str_value, float *dest) {
   if (str_value == NULL || dest == NULL) {
     logger(3, "Error: NULL pointer passed to str_to_float\n");
+    return -1;
+  }
+  
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to str_to_float\n");
     return -1;
   }
 
@@ -150,6 +165,11 @@ extern int64_t str_to_double(uint8_t *str_value, double *dest) {
     return -1;
   }
 
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to str_to_double\n");
+    return -1;
+  }
+
   errno = 0;
   uint8_t *end;
   double double_value = strtod(str_value, (char**)&end);
@@ -171,6 +191,11 @@ extern int64_t str_to_double(uint8_t *str_value, double *dest) {
 extern int64_t str_to_bool(uint8_t *str_value, bool *dest) {
   if (str_value == NULL || dest == NULL) {
     logger(3, "Error: NULL pointer passed to str_to_bool\n");
+    return -1;
+  }
+
+  if (strlen(str_value) == 0) {
+    logger(3, "Error: Empty string passed to str_to_bool\n");
     return -1;
   }
   
