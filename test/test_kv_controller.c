@@ -462,90 +462,75 @@ static void test_print_db_null() {
   print_db(NULL);
 }
 
-// static void test_multiple_entries_operations() {
-//   logger(4, "*** test_multiple_entries_operations ***\n");
+static void test_multiple_entries_operations() {
+  logger(4, "*** test_multiple_entries_operations ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
+  for (int i = 0; i < 10; i++) {
+    char key[32];
+    char value[32];
+    snprintf(key, sizeof(key), "key_%d", i);
+    snprintf(value, sizeof(value), "%d", i * 10);
+    TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, key, value, INT32_TYPE_STR));
+  }
   
-//   // Insert multiple entries
-//   for (int i = 0; i < 10; i++) {
-//     char key[32];
-//     char value[32];
-//     snprintf(key, sizeof(key), "key_%d", i);
-//     snprintf(value, sizeof(value), "%d", i * 10);
+  for (int i = 0; i < 10; i++) {
+    char key[32];
+    snprintf(key, sizeof(key), "key_%d", i);
     
-//     int64_t result = put_entry(db, key, value, INT32_TYPE_STR);
-//     TEST_ASSERT_GREATER_OR_EQUAL(0, result);
-//   }
+    db_entry_t *entry = get_entry(db, key);
+    TEST_ASSERT_NOT_NULL(entry);
+    TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
+    TEST_ASSERT_EQUAL(i * 10, *(int32_t*)entry->value);
+  }
   
-//   // Verify all entries exist
-//   for (int i = 0; i < 10; i++) {
-//     char key[32];
-//     snprintf(key, sizeof(key), "key_%d", i);
-    
-//     db_entry_t *entry = get_entry(db, key);
-//     TEST_ASSERT_NOT_NULL(entry);
-//     TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
-//     TEST_ASSERT_EQUAL(i * 10, *(int32_t*)entry->value);
-//   }
+  for (int i = 0; i < 5; i++) {
+    char key[32];
+    snprintf(key, sizeof(key), "key_%d", i);
+    TEST_ASSERT_GREATER_OR_EQUAL(0, delete_entry(db, key));
+  }
   
-//   // Delete some entries
-//   for (int i = 0; i < 5; i++) {
-//     char key[32];
-//     snprintf(key, sizeof(key), "key_%d", i);
-    
-//     int64_t result = delete_entry(db, key);
-//     TEST_ASSERT_GREATER_OR_EQUAL(0, result);
-//   }
+  for (int i = 0; i < 5; i++) {
+    char key[32];
+    snprintf(key, sizeof(key), "key_%d", i);
+    TEST_ASSERT_NULL(get_entry(db, key));
+  }
   
-//   // Verify deleted entries are gone
-//   for (int i = 0; i < 5; i++) {
-//     char key[32];
-//     snprintf(key, sizeof(key), "key_%d", i);
-    
-//     db_entry_t *entry = get_entry(db, key);
-//     TEST_ASSERT_NULL(entry);
-//   }
+  for (int i = 5; i < 10; i++) {
+    char key[32];
+    snprintf(key, sizeof(key), "key_%d", i);
+    db_entry_t *entry = get_entry(db, key);
+    TEST_ASSERT_NOT_NULL(entry);
+    TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
+    TEST_ASSERT_EQUAL(i * 10, *(int32_t*)entry->value);
+  }
   
-//   // Verify remaining entries still exist
-//   for (int i = 5; i < 10; i++) {
-//     char key[32];
-//     snprintf(key, sizeof(key), "key_%d", i);
-    
-//     db_entry_t *entry = get_entry(db, key);
-//     TEST_ASSERT_NOT_NULL(entry);
-//     TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
-//     TEST_ASSERT_EQUAL(i * 10, *(int32_t*)entry->value);
-//   }
-  
-//   free_db(db);
-// }
+  free_db(db);
+}
 
-// static void test_edge_case_long_strings() {
-//   logger(4, "*** test_edge_case_long_strings ***\n");
+static void test_long_strings() {
+  logger(4, "*** test_long_strings ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
+  uint8_t long_key[SM_BUFFER_SIZE];
+  memset(long_key, 'a', SM_BUFFER_SIZE-1);
+  long_key[SM_BUFFER_SIZE-1] = '\0';
   
-//   char long_key[SM_BUFFER_SIZE];
-//   memset(long_key, 'a', SM_BUFFER_SIZE - 2);
-//   long_key[SM_BUFFER_SIZE - 2] = '\0';
+  uint8_t long_value[BG_BUFFER_SIZE];
+  memset(long_value, 'b', BG_BUFFER_SIZE-1);
+  long_value[BG_BUFFER_SIZE-1] = '\0';
   
-//   char long_value[BG_BUFFER_SIZE];
-//   memset(long_value, 'b', BG_BUFFER_SIZE - 2);
-//   long_value[BG_BUFFER_SIZE - 2] = '\0';
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, long_key, long_value, STR_TYPE_STR));
   
-//   int64_t result = put_entry(db, long_key, long_value, STR_TYPE_STR);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, result);
+  db_entry_t *entry = get_entry(db, long_key);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL(STR_TYPE, entry->type);
+  TEST_ASSERT_EQUAL_STRING(long_value, (uint8_t*)entry->value);
   
-//   db_entry_t *entry = get_entry(db, long_key);
-//   TEST_ASSERT_NOT_NULL(entry);
-//   TEST_ASSERT_EQUAL(STR_TYPE, entry->type);
-//   TEST_ASSERT_EQUAL_STRING(long_value, (char*)entry->value);
-  
-//   free_db(db);
-// }
+  free_db(db);
+}
 
 int64_t main() {
   UNITY_BEGIN();
@@ -598,9 +583,9 @@ int64_t main() {
   RUN_TEST(test_print_db_valid);
   RUN_TEST(test_print_db_null);
   
-  // // Integration and edge case tests
-  // RUN_TEST(test_multiple_entries_operations);
-  // RUN_TEST(test_edge_case_long_strings);
+  // Integration and edge case tests
+  RUN_TEST(test_multiple_entries_operations);
+  RUN_TEST(test_long_strings);
   
   return UNITY_END();
 }
