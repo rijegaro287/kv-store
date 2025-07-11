@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include "string_conversion.h"
 #include "logger.h"
 #include "constants.h"
