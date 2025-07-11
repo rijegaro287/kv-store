@@ -1,28 +1,5 @@
 #include "test_kv_parser.h"
 
-// Test List:
-// * test_create_entry_valid_inputs
-// * test_create_entry_null_inputs
-// * test_create_entry_invalid_type
-// * test_set_entry_value_all_types
-// * test_set_entry_value_null_inputs
-// * test_set_entry_value_invalid_type
-// * test_parse_line_valid_entry
-// * test_parse_line_comment_line
-// * test_parse_line_empty_line
-// * test_parse_line_malformed_entry
-// * test_parse_line_null_input
-// * test_update_entry_valid
-// * test_update_entry_null_inputs
-// * test_update_entry_empty_type
-// * test_parse_entry_valid
-// * test_parse_entry_null_inputs
-// * test_free_entry_valid
-// * test_free_entry_null
-// * test_print_entry_all_types
-// * test_print_entry_null_input
-// * test_print_entry_invalid_type
-
 static void test_create_entry_valid_inputs() {
   logger(4, "*** test_create_entry_valid_inputs ***\n");
   db_entry_t *entry_1 = create_entry("testkey_1", "42", INT32_TYPE_STR);
@@ -320,110 +297,280 @@ static void test_parse_entry_invalid_inputs() {
   free_entry(entry);
 }
 
+static void test_parse_line_valid_entry() {
+  logger(4, "*** test_parse_line_valid_entry ***\n");
+  uint8_t line[BG_BUFFER_SIZE] = INT8_TYPE_STR TYPE_DELIMETER
+                                 "testkey" KEY_DELIMETER
+                                 "42" VALUE_DELIMETER;
+  db_entry_t *entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(INT8_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(42, *(int8_t*)entry->value);
+  free_entry(entry);
+}
 
-// static void test_parse_line_valid_entry() {
-//   uint8_t line[BG_BUFFER_SIZE];
-//   db_entry_t *line_entry = create_entry("key", "12", INT8_TYPE_STR);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(line_entry, line, BG_BUFFER_SIZE));
+static void test_parse_line_all_types() {
+  logger(4, "*** test_parse_line_all_types ***\n");
+  db_entry_t *entry;
+  uint8_t line[BG_BUFFER_SIZE];
 
-//   db_entry_t *entry = parse_line(line);
-//   TEST_ASSERT_NOT_NULL(entry);
-//   TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
-//   TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
-//   TEST_ASSERT_EQUAL(42, *(int32_t*)entry->value);
-//   free_entry(entry);
-// }
-
-// static void test_parse_line_comment_line() {
-//   uint8_t line[] = "# This is a comment\n";
-//   db_entry_t *entry = parse_line(line);
-//   TEST_ASSERT_NULL(entry);
-// }
-
-// static void test_parse_line_empty_line() {
-//   uint8_t line[] = "\n";
-//   db_entry_t *entry = parse_line(line);
-//   TEST_ASSERT_NULL(entry);
-// }
-
-// static void test_parse_line_malformed_entry() {
-//   uint8_t line[] = "invalid_format\n";
-//   db_entry_t *entry = parse_line(line);
-//   TEST_ASSERT_NULL(entry);
-// }
-
-// static void test_parse_line_null_input() {
-//   TEST_ASSERT_NULL(parse_line(NULL));
-// }
-
-
-// static void test_free_entry_valid() {
-//   db_entry_t *entry = create_entry("key", "42", INT32_TYPE_STR);
-//   TEST_ASSERT_NOT_NULL(entry);
-//   free_entry(entry); // Should not crash
-// }
-
-// static void test_free_entry_null() {
-//   free_entry(NULL); // Should not crash
-// }
-
-// static void test_print_entry_all_types() {
-//   // Test INT8
-//   db_entry_t *entry = create_entry("key", "42", INT8_TYPE_STR);
-//   print_entry(entry); // Should not crash
-//   free_entry(entry);
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           INT8_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(INT8_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(42, *(int8_t*)entry->value);
+  free_entry(entry);
   
-//   // Test INT16
-//   entry = create_entry("key", "42", INT16_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-  
-//   // Test INT32
-//   entry = create_entry("key", "42", INT32_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-  
-//   // Test INT64
-//   entry = create_entry("key", "42", INT64_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-  
-//   // Test BOOL
-//   entry = create_entry("key", "true", BOOL_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-  
-//   // Test FLOAT
-//   entry = create_entry("key", "3.14", FLOAT_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-  
-//   // Test DOUBLE
-//   entry = create_entry("key", "3.14159", DOUBLE_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-  
-//   // Test STRING
-//   entry = create_entry("key", "hello", STR_TYPE_STR);
-//   print_entry(entry);
-//   free_entry(entry);
-// }
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           INT16_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "2182", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(INT16_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(2182, *(int16_t*)entry->value);
+  free_entry(entry);
 
-// static void test_print_entry_null_input() {
-//   print_entry(NULL); // Should not crash
-// }
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           INT32_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "82918", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(82918, *(int32_t*)entry->value);
+  free_entry(entry);
+  
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           INT64_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "7827281", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(INT64_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(7827281, *(int64_t*)entry->value);
+  free_entry(entry);
 
-// static void test_print_entry_invalid_type() {
-//   db_entry_t entry;
-//   entry.type = 999; // Invalid type
-//   strcpy(entry.key, "testkey");
-//   entry.value = malloc(sizeof(int));
-//   *(int*)entry.value = 42;
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           FLOAT_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "1.213432", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(FLOAT_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(1.213432, *(float*)entry->value);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           DOUBLE_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "3.123456789123456", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(DOUBLE_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(3.123456789123456, *(double*)entry->value);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           BOOL_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "true", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(BOOL_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(1, *(bool*)entry->value);
+  free_entry(entry);
   
-//   print_entry(&entry); // Should handle invalid type gracefully
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           BOOL_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "false", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(BOOL_TYPE, entry->type);
+  TEST_ASSERT_EQUAL(0, *(bool*)entry->value);
+  free_entry(entry);
   
-//   free(entry.value);
-// }
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           STR_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER, 
+           "Hello World", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NOT_NULL(entry);
+  TEST_ASSERT_EQUAL_STRING("testkey", entry->key);
+  TEST_ASSERT_EQUAL(STR_TYPE, entry->type);
+  TEST_ASSERT_EQUAL_STRING("Hello World", (uint8_t*)entry->value);
+  free_entry(entry);
+}
+
+static void test_parse_line_comment_line() {
+  logger(4, "*** test_parse_line_comment_line ***\n");
+  uint8_t line[] = "# This is a comment\n";
+  db_entry_t *entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+}
+
+static void test_parse_line_empty_line() {
+  logger(4, "*** test_parse_line_empty_line ***\n");
+  uint8_t line[] = "\n";
+  db_entry_t *entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+}
+
+static void test_parse_line_malformed_entry() {
+  logger(4, "*** test_parse_line_malformed_entry ***\n");
+  db_entry_t *entry;
+  uint8_t line[BG_BUFFER_SIZE];
+  
+  snprintf(line, BG_BUFFER_SIZE, "invalid_format\n");
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s", 
+           INT8_TYPE_STR, TYPE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s", 
+           INT8_TYPE_STR, TYPE_DELIMETER,
+           "testkey", KEY_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s", 
+           INT8_TYPE_STR, TYPE_DELIMETER, 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s", 
+           "testkey", KEY_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s", 
+           "testkey", KEY_DELIMETER, 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s", 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s", 
+           "testkey", KEY_DELIMETER, 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s", 
+           INT8_TYPE_STR, "*",
+           "testkey", KEY_DELIMETER, 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
+           INT8_TYPE_STR, TYPE_DELIMETER,
+           "testkey", ";", 
+           "42", VALUE_DELIMETER);
+  entry = parse_line(line);
+  TEST_ASSERT_NULL(entry);
+  free_entry(entry);
+}
+
+static void test_parse_line_null_input() {
+  logger(4, "*** test_parse_line_null_input ***\n");
+  TEST_ASSERT_NULL(parse_line(NULL));
+}
+
+static void test_free_entry_valid() {
+  logger(4, "*** test_free_entry_valid ***\n");
+  db_entry_t *entry = create_entry("key", "42", INT32_TYPE_STR);
+  TEST_ASSERT_NOT_NULL(entry);
+  free_entry(entry);
+}
+
+static void test_free_entry_null() {
+  logger(4, "*** test_free_entry_null ***\n");
+  free_entry(NULL);
+}
+
+static void test_print_entry_all_types() {
+  logger(4, "*** test_print_entry_all_types ***\n");
+  db_entry_t *entry = create_entry("key", "42", INT8_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "42", INT16_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "42", INT32_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "42", INT64_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "true", BOOL_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "3.14", FLOAT_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "3.14159", DOUBLE_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+  
+  entry = create_entry("key", "hello", STR_TYPE_STR);
+  print_entry(entry);
+  free_entry(entry);
+}
+
+static void test_print_entry_null_input() {
+  logger(4, "*** test_print_entry_null_input ***\n");
+  print_entry(NULL);
+}
+
+static void test_print_entry_invalid_type() {
+  logger(4, "*** test_print_entry_invalid_type ***\n");
+  db_entry_t entry;
+  entry.type = 999;
+  strcpy(entry.key, "testkey");
+  entry.value = malloc(sizeof(int));
+  *(int*)entry.value = 42;
+  
+  print_entry(&entry);
+  
+  free(entry.value);
+}
 
 extern void setUp(void) {
   // set stuff up here
@@ -433,7 +580,7 @@ extern void tearDown(void) {
   // clean stuff up here
 }
 
-extern int64_t test_kv_parser() {
+extern int64_t main() {
   UNITY_BEGIN();
   
   // create_entry
@@ -459,17 +606,21 @@ extern int64_t test_kv_parser() {
   RUN_TEST(test_parse_entry_invalid_inputs);
 
   // parse_line
-  // RUN_TEST(test_parse_line_valid_entry);
-  // RUN_TEST(test_parse_line_comment_line);
-  // RUN_TEST(test_parse_line_empty_line);
-  // RUN_TEST(test_parse_line_malformed_entry);
-  // RUN_TEST(test_parse_line_null_input);
+  RUN_TEST(test_parse_line_valid_entry);
+  RUN_TEST(test_parse_line_all_types);
+  RUN_TEST(test_parse_line_comment_line);
+  RUN_TEST(test_parse_line_empty_line);
+  RUN_TEST(test_parse_line_malformed_entry);
+  RUN_TEST(test_parse_line_null_input);
 
-  // RUN_TEST(test_free_entry_valid);
-  // RUN_TEST(test_free_entry_null);
-  // RUN_TEST(test_print_entry_all_types);
-  // RUN_TEST(test_print_entry_null_input);
-  // RUN_TEST(test_print_entry_invalid_type);
+  // free_entry
+  RUN_TEST(test_free_entry_valid);
+  RUN_TEST(test_free_entry_null);
+
+  // print_entry
+  RUN_TEST(test_print_entry_all_types);
+  RUN_TEST(test_print_entry_null_input);
+  RUN_TEST(test_print_entry_invalid_type);
   
   return UNITY_END();
 }

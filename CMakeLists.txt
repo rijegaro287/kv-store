@@ -33,30 +33,43 @@ set(HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/constants.h
             ${CMAKE_CURRENT_SOURCE_DIR}/include/kv_controller.h
 )
 
-set(TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/tests.c
-         ${CMAKE_CURRENT_SOURCE_DIR}/test/test_kv_parser.c
-         ${CMAKE_CURRENT_SOURCE_DIR}/test/include/test_kv_parser.h
-)
-
-add_executable(test_kv_store ${TEST} ${SOURCES} ${HEADERS})
-
 add_library(kv_store STATIC ${SOURCES} ${HEADERS})
 
-target_include_directories(test_kv_store PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-                                                 ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
-
 target_include_directories(kv_store PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+target_link_libraries(kv_store PRIVATE logger)
+
+
+set(TEST_CONTROLLER ${CMAKE_CURRENT_SOURCE_DIR}/test/test_kv_controller.c
+                    ${CMAKE_CURRENT_SOURCE_DIR}/test/include/test_kv_controller.h
+)
+set(TEST_PARSER ${CMAKE_CURRENT_SOURCE_DIR}/test/test_kv_parser.c
+                ${CMAKE_CURRENT_SOURCE_DIR}/test/include/test_kv_parser.h
+)
+
+add_executable(test_kv_parser ${TEST_PARSER} ${SOURCES} ${HEADERS})
+add_executable(test_kv_controller ${TEST_CONTROLLER} ${SOURCES} ${HEADERS})
+
+target_include_directories(test_kv_parser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+                                                  ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
+
+target_include_directories(test_kv_controller PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+                                                      ${CMAKE_CURRENT_SOURCE_DIR}/test/include)
 
 target_compile_definitions(unity PUBLIC
   UNITY_INCLUDE_DOUBLE
   UNITY_DOUBLE_PRECISION=1e-15
 )
 
-target_link_libraries(test_kv_store PRIVATE logger unity)
-target_link_libraries(kv_store PRIVATE logger)
+target_link_libraries(test_kv_parser PRIVATE logger unity)
+target_link_libraries(test_kv_controller PRIVATE logger unity)
 
 enable_testing()
 
-add_test(NAME kv_store_tests
-         COMMAND test_kv_store
+add_test(NAME test_kv_parser
+         COMMAND test_kv_parser
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_test(NAME test_kv_controller
+         COMMAND test_kv_controller
          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
