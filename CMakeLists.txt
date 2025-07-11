@@ -35,7 +35,7 @@ set(HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/constants.h
 
 add_library(kv_store STATIC ${SOURCES} ${HEADERS})
 
-target_include_directories(kv_store PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(kv_store PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(kv_store PRIVATE logger)
 
