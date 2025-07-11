@@ -314,205 +314,153 @@ static void test_delete_entry_empty_key() {
   free_db(db);
 }
 
-// static void test_save_load_db_valid_list() {
-//   logger(4, "*** test_save_load_db_valid_list ***\n");
-  
-//   // Create and populate database
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key1", "42", INT32_TYPE_STR));
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key2", "3.14", FLOAT_TYPE_STR));
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key3", "hello", STR_TYPE_STR));
-  
-//   // Save database
-//   uint8_t *file_path = "/tmp/test_db_list.db";
-//   int64_t save_result = save_db(db, file_path);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, save_result);
-  
-//   // Create new database and load
-//   db_t *new_db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(new_db);
-  
-//   int64_t load_result = load_db(new_db, file_path);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, load_result);
-  
-//   // Verify loaded data
-//   db_entry_t *entry1 = get_entry(new_db, "key1");
-//   TEST_ASSERT_NOT_NULL(entry1);
-//   TEST_ASSERT_EQUAL(INT32_TYPE, entry1->type);
-//   TEST_ASSERT_EQUAL(42, *(int32_t*)entry1->value);
-  
-//   db_entry_t *entry2 = get_entry(new_db, "key2");
-//   TEST_ASSERT_NOT_NULL(entry2);
-//   TEST_ASSERT_EQUAL(FLOAT_TYPE, entry2->type);
-//   TEST_ASSERT_EQUAL_FLOAT(3.14, *(float*)entry2->value);
-  
-//   db_entry_t *entry3 = get_entry(new_db, "key3");
-//   TEST_ASSERT_NOT_NULL(entry3);
-//   TEST_ASSERT_EQUAL(STR_TYPE, entry3->type);
-//   TEST_ASSERT_EQUAL_STRING("hello", (char*)entry3->value);
-  
-//   free_db(db);
-//   free_db(new_db);
-//   remove(file_path);
-// }
+static void test_save_load_db_valid_list() {
+  logger(4, "*** test_save_load_db_valid_list ***\n");
+  uint8_t *file_path = "/tmp/test_db_list.db";
 
-// static void test_save_load_db_valid_hash() {
-//   logger(4, "*** test_save_load_db_valid_hash ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key1", "42", INT32_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key2", "3.14", FLOAT_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key3", "hello", STR_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, save_db(db, file_path));
   
-//   // Create and populate database
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_HASH);
-//   TEST_ASSERT_NOT_NULL(db);
+  db_t *new_db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(new_db);
+  TEST_ASSERT_GREATER_OR_EQUAL(0, load_db(new_db, file_path));
   
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key1", "42", INT32_TYPE_STR));
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key2", "3.14", FLOAT_TYPE_STR));
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key3", "hello", STR_TYPE_STR));
+  db_entry_t *entry1 = get_entry(new_db, "key1");
+  TEST_ASSERT_NOT_NULL(entry1);
+  TEST_ASSERT_EQUAL(INT32_TYPE, entry1->type);
+  TEST_ASSERT_EQUAL(42, *(int32_t*)entry1->value);
   
-//   // Save database
-//   uint8_t *file_path = "/tmp/test_db_hash.db";
-//   int64_t save_result = save_db(db, file_path);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, save_result);
+  db_entry_t *entry2 = get_entry(new_db, "key2");
+  TEST_ASSERT_NOT_NULL(entry2);
+  TEST_ASSERT_EQUAL(FLOAT_TYPE, entry2->type);
+  TEST_ASSERT_EQUAL_FLOAT(3.14, *(float*)entry2->value);
   
-//   // Create new database and load
-//   db_t *new_db = create_db(KV_STORAGE_STRUCTURE_HASH);
-//   TEST_ASSERT_NOT_NULL(new_db);
+  db_entry_t *entry3 = get_entry(new_db, "key3");
+  TEST_ASSERT_NOT_NULL(entry3);
+  TEST_ASSERT_EQUAL(STR_TYPE, entry3->type);
+  TEST_ASSERT_EQUAL_STRING("hello", (char*)entry3->value);
   
-//   int64_t load_result = load_db(new_db, file_path);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, load_result);
-  
-//   // Verify loaded data
-//   db_entry_t *entry1 = get_entry(new_db, "key1");
-//   TEST_ASSERT_NOT_NULL(entry1);
-//   TEST_ASSERT_EQUAL(INT32_TYPE, entry1->type);
-//   TEST_ASSERT_EQUAL(42, *(int32_t*)entry1->value);
-  
-//   db_entry_t *entry2 = get_entry(new_db, "key2");
-//   TEST_ASSERT_NOT_NULL(entry2);
-//   TEST_ASSERT_EQUAL(FLOAT_TYPE, entry2->type);
-//   TEST_ASSERT_EQUAL_FLOAT(3.14, *(float*)entry2->value);
-  
-//   db_entry_t *entry3 = get_entry(new_db, "key3");
-//   TEST_ASSERT_NOT_NULL(entry3);
-//   TEST_ASSERT_EQUAL(STR_TYPE, entry3->type);
-//   TEST_ASSERT_EQUAL_STRING("hello", (char*)entry3->value);
-  
-//   free_db(db);
-//   free_db(new_db);
-//   remove(file_path);
-// }
+  free_db(db);
+  free_db(new_db);
+  remove(file_path);
+}
 
-// static void test_save_db_null_db() {
-//   logger(4, "*** test_save_db_null_db ***\n");
+static void test_save_load_db_valid_hash() {
+  logger(4, "*** test_save_load_db_valid_hash ***\n");
+  uint8_t *file_path = "/tmp/test_db_hash.db";
   
-//   int64_t result = save_db(NULL, "/tmp/test.db");
-//   TEST_ASSERT_EQUAL(-1, result);
-// }
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_HASH);
+  TEST_ASSERT_NOT_NULL(db);
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key1", "42", INT32_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key2", "3.14", FLOAT_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key3", "hello", STR_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, save_db(db, file_path));
+  
+  db_t *new_db = create_db(KV_STORAGE_STRUCTURE_HASH);
+  TEST_ASSERT_NOT_NULL(new_db);
+  TEST_ASSERT_GREATER_OR_EQUAL(0, load_db(new_db, file_path));
+  
+  db_entry_t *entry1 = get_entry(new_db, "key1");
+  TEST_ASSERT_NOT_NULL(entry1);
+  TEST_ASSERT_EQUAL(INT32_TYPE, entry1->type);
+  TEST_ASSERT_EQUAL(42, *(int32_t*)entry1->value);
+  
+  db_entry_t *entry2 = get_entry(new_db, "key2");
+  TEST_ASSERT_NOT_NULL(entry2);
+  TEST_ASSERT_EQUAL(FLOAT_TYPE, entry2->type);
+  TEST_ASSERT_EQUAL_FLOAT(3.14, *(float*)entry2->value);
+  
+  db_entry_t *entry3 = get_entry(new_db, "key3");
+  TEST_ASSERT_NOT_NULL(entry3);
+  TEST_ASSERT_EQUAL(STR_TYPE, entry3->type);
+  TEST_ASSERT_EQUAL_STRING("hello", (char*)entry3->value);
+  
+  free_db(db);
+  free_db(new_db);
+  remove(file_path);
+}
 
-// static void test_save_db_null_path() {
-//   logger(4, "*** test_save_db_null_path ***\n");
+static void test_save_db_null_inputs() {
+  logger(4, "*** test_save_db_null_inputs ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = save_db(db, NULL);
-//   TEST_ASSERT_EQUAL(-1, result);
-  
-//   free_db(db);
-// }
+  TEST_ASSERT_EQUAL(-1, save_db(NULL, "/tmp/test.db"));
+  TEST_ASSERT_EQUAL(-1, save_db(db, NULL));
 
-// static void test_save_db_empty_path() {
-//   logger(4, "*** test_save_db_empty_path ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = save_db(db, "");
-//   TEST_ASSERT_EQUAL(-1, result);
-  
-//   free_db(db);
-// }
+  free_db(db);
+}
 
-// static void test_load_db_null_db() {
-//   logger(4, "*** test_load_db_null_db ***\n");
-  
-//   int64_t result = load_db(NULL, "/tmp/test.db");
-//   TEST_ASSERT_EQUAL(-1, result);
-// }
+static void test_save_db_empty_path() {
+  logger(4, "*** test_save_db_empty_path ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
+  TEST_ASSERT_EQUAL(-1, save_db(db, ""));
+  free_db(db);
+}
 
-// static void test_load_db_null_path() {
-//   logger(4, "*** test_load_db_null_path ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = load_db(db, NULL);
-//   TEST_ASSERT_EQUAL(-1, result);
-  
-//   free_db(db);
-// }
+static void test_load_db_null_inputs() {
+  logger(4, "*** test_load_db_null_inputs ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
 
-// static void test_load_db_empty_path() {
-//   logger(4, "*** test_load_db_empty_path ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = load_db(db, "");
-//   TEST_ASSERT_EQUAL(-1, result);
-  
-//   free_db(db);
-// }
+  TEST_ASSERT_EQUAL(-1, load_db(NULL, "/tmp/test.db"));
+  TEST_ASSERT_EQUAL(-1, load_db(db, NULL));
 
-// static void test_load_db_nonexistent_file() {
-//   logger(4, "*** test_load_db_nonexistent_file ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = load_db(db, "/tmp/nonexistent_file.db");
-//   TEST_ASSERT_EQUAL(-1, result);
-  
-//   free_db(db);
-// }
+  free_db(db);
+}
 
-// static void test_free_db_valid() {
-//   logger(4, "*** test_free_db_valid ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   // Should not crash
-//   free_db(db);
-// }
+static void test_load_db_empty_path() {
+  logger(4, "*** test_load_db_empty_path ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
+  TEST_ASSERT_EQUAL(-1, load_db(db, ""));
+  free_db(db);
+}
 
-// static void test_free_db_null() {
-//   logger(4, "*** test_free_db_null ***\n");
+static void test_load_db_nonexistent_file() {
+  logger(4, "*** test_load_db_nonexistent_file ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   // Should not crash
-//   free_db(NULL);
-// }
+  TEST_ASSERT_EQUAL(-1, load_db(db, "/tmp/nonexistent_file.db"));
+  
+  free_db(db);
+}
 
-// static void test_print_db_valid() {
-//   logger(4, "*** test_print_db_valid ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   put_entry(db, "test_key", "42", INT32_TYPE_STR);
-  
-//   // Should not crash
-//   print_db(db);
-  
-//   free_db(db);
-// }
+static void test_free_db_valid() {
+  logger(4, "*** test_free_db_valid ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
+  free_db(db);
+}
 
-// static void test_print_db_null() {
-//   logger(4, "*** test_print_db_null ***\n");
+static void test_free_db_null() {
+  logger(4, "*** test_free_db_null ***\n");
+  free_db(NULL);
+}
+
+static void test_print_db_valid() {
+  logger(4, "*** test_print_db_valid ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   // Should not crash
-//   print_db(NULL);
-// }
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "test_key_1", "42", INT32_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "test_key_2", "24", INT32_TYPE_STR));
+  
+  print_db(db);
+  
+  free_db(db);
+}
+
+static void test_print_db_null() {
+  logger(4, "*** test_print_db_null ***\n");
+  print_db(NULL);
+}
 
 // static void test_multiple_entries_operations() {
 //   logger(4, "*** test_multiple_entries_operations ***\n");
@@ -635,22 +583,20 @@ int64_t main() {
   RUN_TEST(test_delete_entry_null_inputs);
   RUN_TEST(test_delete_entry_empty_key);
   
-  // // save_db and load_db tests
-  // RUN_TEST(test_save_load_db_valid_list);
-  // RUN_TEST(test_save_load_db_valid_hash);
-  // RUN_TEST(test_save_db_null_db);
-  // RUN_TEST(test_save_db_null_path);
-  // RUN_TEST(test_save_db_empty_path);
-  // RUN_TEST(test_load_db_null_db);
-  // RUN_TEST(test_load_db_null_path);
-  // RUN_TEST(test_load_db_empty_path);
-  // RUN_TEST(test_load_db_nonexistent_file);
+  // save_db and load_db tests
+  RUN_TEST(test_save_load_db_valid_list);
+  RUN_TEST(test_save_load_db_valid_hash);
+  RUN_TEST(test_save_db_null_inputs);
+  RUN_TEST(test_save_db_empty_path);
+  RUN_TEST(test_load_db_null_inputs);
+  RUN_TEST(test_load_db_empty_path);
+  RUN_TEST(test_load_db_nonexistent_file);
   
-  // // free_db and print_db tests
-  // RUN_TEST(test_free_db_valid);
-  // RUN_TEST(test_free_db_null);
-  // RUN_TEST(test_print_db_valid);
-  // RUN_TEST(test_print_db_null);
+  // free_db and print_db tests
+  RUN_TEST(test_free_db_valid);
+  RUN_TEST(test_free_db_null);
+  RUN_TEST(test_print_db_valid);
+  RUN_TEST(test_print_db_null);
   
   // // Integration and edge case tests
   // RUN_TEST(test_multiple_entries_operations);
