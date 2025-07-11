@@ -19,7 +19,6 @@ extern db_t *create_db(uint8_t *storage_type) {
   strncpy(db->storage_type, storage_type, SM_BUFFER_SIZE);
   db->storage_type[SM_BUFFER_SIZE-1] = '\0';
 
-
   if(strcmp(storage_type, KV_STORAGE_STRUCTURE_LIST) == 0) {
     db->storage = create_list();
   }
