@@ -3,8 +3,6 @@ rebuild "$@"
 if [[ "$rebuild" == "true" ]]; then
   rm -rf ./build
 fi
-
-rm -rf ./build
 mkdir -p ./build
 
 cd ./build
