@@ -23,6 +23,6 @@ extern int64_t set_entry_value(db_entry_t *dest, uint8_t *str_value);
 extern int64_t update_entry(db_entry_t *entry, uint8_t* value, uint8_t* type);
 extern db_entry_t* create_entry(uint8_t *key, uint8_t *value, uint8_t *type);
 extern db_entry_t* parse_line(uint8_t *line);
-extern void parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len);
+extern int64_t parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len);
 extern void free_entry(db_entry_t *entry);
 extern void print_entry(db_entry_t *entry);

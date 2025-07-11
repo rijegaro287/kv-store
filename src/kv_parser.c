@@ -302,20 +302,38 @@ extern db_entry_t* parse_line(uint8_t *line) {
   return entry;
 }
 
-extern void parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len) {
+extern int64_t parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len) {
   if (entry == NULL || dest == NULL) {
     logger(3, "Error: NULL pointer passed to parse_entry\n");
-    return;
+    return -1;
+  }
+  
+  if (max_len == 0) {
+    logger(3, "Error: Zero length int passed to parse_entry\n");
+    return -1;
   }
   
   uint8_t type[SM_BUFFER_SIZE];
   uint8_t key[SM_BUFFER_SIZE];
   uint8_t value[SM_BUFFER_SIZE];
 
-  map_datatype_to_str(entry->type, type, SM_BUFFER_SIZE);
-  map_value_to_str(entry->type, entry->value, value, SM_BUFFER_SIZE);
+  if (map_datatype_to_str(entry->type, type, SM_BUFFER_SIZE) < 0) {
+    logger(3, "Error: failed to map datatype\n");
+    return -1;
+  }
+  
+  if (map_value_to_str(entry->type, entry->value, value, SM_BUFFER_SIZE) < 0) {
+    logger(3, "Error: failed to map value\n");
+    return -1;
+  }
+
   strncpy(key, entry->key, SM_BUFFER_SIZE);
   key[SM_BUFFER_SIZE-1] = '\0';
+
+  if (strlen(type) == 0 || strlen(key) == 0 || strlen(value) == 0) {
+    logger(3, "Error: Mapped string of zero length in parse_entry\n");
+    return -1;
+  }
 
   snprintf(dest, max_len, "%s%s%s%s%s%s", type,
                                           KV_PARSER_TYPE_DELIMITER,
@@ -323,6 +341,7 @@ extern void parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len) {
                                           KV_PARSER_KEY_DELIMITER,
                                           value,
                                           KV_PARSER_VALUE_DELIMITER);
+  return 0;
 }
 
 extern void free_entry(db_entry_t *entry) {
@@ -341,9 +360,12 @@ extern void print_entry(db_entry_t *entry) {
   }
   
   uint8_t type[SM_BUFFER_SIZE];
-  map_datatype_to_str(entry->type, type, SM_BUFFER_SIZE);
+  if (map_datatype_to_str(entry->type, type, SM_BUFFER_SIZE) < 0) {
+    logger(3, "Error: failed to map datatype\n");
+    return;
+  }
 
-  logger(4, "%s\t%s\t", entry->key, type);
+  logger(4, "%s\t%s\t", type, entry->key);
 
   switch (entry->type) {
   case INT8_TYPE:

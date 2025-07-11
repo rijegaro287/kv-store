@@ -25,10 +25,10 @@ extern int64_t map_datatype_from_str(uint8_t *type) {
   }
 }
 
-extern void map_datatype_to_str(uint64_t type, uint8_t *dest, uint64_t max_len) {
+extern int64_t map_datatype_to_str(uint64_t type, uint8_t *dest, uint64_t max_len) {
   if (dest == NULL) {
     logger(3, "Error: NULL pointer passed to map_datatype_to_str\n");
-    return;
+    return -1;
   }
 
   switch (type) {
@@ -57,16 +57,16 @@ extern void map_datatype_to_str(uint64_t type, uint8_t *dest, uint64_t max_len) 
     strncpy(dest, STR_TYPE_STR, max_len);
     break;
   default:
-    dest[0] = '\0';
-    return;
+    return -1;
   }
   dest[max_len-1] = '\0';
+  return 0;
 }
 
-extern void map_value_to_str(uint64_t type, void *value, uint8_t *dest, uint64_t max_len) {
+extern int64_t map_value_to_str(uint64_t type, void *value, uint8_t *dest, uint64_t max_len) {
   if (value == NULL || dest == NULL) {
     logger(3, "Error: NULL pointer passed to map_value_to_str\n");
-    return;
+    return -1;
   }
 
   switch (type) {
@@ -95,10 +95,9 @@ extern void map_value_to_str(uint64_t type, void *value, uint8_t *dest, uint64_t
     snprintf(dest, max_len, "%s", (uint8_t*)value);
     break;
   default:
-    dest[0] = '\0';
-    return;
+    return -1;
   }
-  dest[max_len - 1] = '\0';
+  dest[max_len-1] = '\0';
 }
 
 extern int64_t str_to_int64(uint8_t *str_value, int64_t *dest) {

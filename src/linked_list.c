@@ -167,9 +167,13 @@ extern int64_t list_save(FILE *file, list_t *list) {
   node_t *current_node = list->head;
   while (current_node != NULL) {
     uint8_t entry_str[BG_BUFFER_SIZE];
-    parse_entry(current_node->entry, entry_str, BG_BUFFER_SIZE);
-    if (strlen(entry_str) == 0) {
+    if (parse_entry(current_node->entry, entry_str, BG_BUFFER_SIZE) < 0){
       logger(3, "Error: Failed to parse entry\n");
+      return -1;
+    }
+
+    if (strlen(entry_str) == 0) {
+      logger(3, "Error: Parsed a zero length entry\n");
       return -1;
     }
 
