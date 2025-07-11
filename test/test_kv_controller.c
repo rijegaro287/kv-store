@@ -207,13 +207,22 @@ static void test_get_entry_valid_hash() {
 
 static void test_get_entry_nonexistent_key() {
   logger(4, "*** test_get_entry_nonexistent_key ***\n");
-  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-  TEST_ASSERT_NOT_NULL(db);
+  db_entry_t *entry;
+
+  db_t *db_list = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db_list);
   
-  db_entry_t *entry = get_entry(db, "nonexistent_key");
+  db_t *db_hash = create_db(KV_STORAGE_STRUCTURE_HASH);
+  TEST_ASSERT_NOT_NULL(db_hash);
+
+  entry = get_entry(db_list, "nonexistent_key");
   TEST_ASSERT_NULL(entry);
   
-  free_db(db);
+  entry = get_entry(db_hash, "nonexistent_key");
+  TEST_ASSERT_NULL(entry);
+  
+  free_db(db_list);
+  free_db(db_hash);
 }
 
 static void test_get_entry_null_inputs() {
@@ -229,7 +238,6 @@ static void test_get_entry_null_inputs() {
 
 static void test_get_entry_empty_key() {
   logger(4, "*** test_get_entry_empty_key ***\n");
-  
   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
   TEST_ASSERT_NOT_NULL(db);
   
@@ -239,86 +247,72 @@ static void test_get_entry_empty_key() {
   free_db(db);
 }
 
-// static void test_delete_entry_valid_list() {
-//   logger(4, "*** test_delete_entry_valid_list ***\n");
+static void test_delete_entry_valid_list() {
+  logger(4, "*** test_delete_entry_valid_list ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "test_key", "42", INT32_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, delete_entry(db, "test_key"));
   
-//   int64_t put_result = put_entry(db, "test_key", "42", INT32_TYPE_STR);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_result);
+  db_entry_t *entry = get_entry(db, "test_key");
+  TEST_ASSERT_NULL(entry);
   
-//   int64_t delete_result = delete_entry(db, "test_key");
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, delete_result);
-  
-//   // Verify entry is deleted
-//   db_entry_t *entry = get_entry(db, "test_key");
-//   TEST_ASSERT_NULL(entry);
-  
-//   free_db(db);
-// }
+  free_db(db);
+}
 
-// static void test_delete_entry_valid_hash() {
-//   logger(4, "*** test_delete_entry_valid_hash ***\n");
+static void test_delete_entry_valid_hash() {
+  logger(4, "*** test_delete_entry_valid_hash ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_HASH);
+  TEST_ASSERT_NOT_NULL(db);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_HASH);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t put_result = put_entry(db, "test_key", "42", INT32_TYPE_STR);
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, put_result);
-  
-//   int64_t delete_result = delete_entry(db, "test_key");
-//   TEST_ASSERT_GREATER_OR_EQUAL(0, delete_result);
-  
-//   // Verify entry is deleted
-//   db_entry_t *entry = get_entry(db, "test_key");
-//   TEST_ASSERT_NULL(entry);
-  
-//   free_db(db);
-// }
+  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "test_key", "42", INT32_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, delete_entry(db, "test_key"));
 
-// static void test_delete_entry_nonexistent_key() {
-//   logger(4, "*** test_delete_entry_nonexistent_key ***\n");
+  db_entry_t *entry = get_entry(db, "test_key");
+  TEST_ASSERT_NULL(entry);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = delete_entry(db, "nonexistent_key");
-//   TEST_ASSERT_LESS_THAN(0, result);
-  
-//   free_db(db);
-// }
+  free_db(db);
+}
 
-// static void test_delete_entry_null_db() {
-//   logger(4, "*** test_delete_entry_null_db ***\n");
-  
-//   int64_t result = delete_entry(NULL, "test_key");
-//   TEST_ASSERT_EQUAL(-1, result);
-// }
+static void test_delete_entry_nonexistent_key() {
+  logger(4, "*** test_delete_entry_nonexistent_key ***\n");
 
-// static void test_delete_entry_null_key() {
-//   logger(4, "*** test_delete_entry_null_key ***\n");
-  
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
-  
-//   int64_t result = delete_entry(db, NULL);
-//   TEST_ASSERT_EQUAL(-1, result);
-  
-//   free_db(db);
-// }
+  db_entry_t *entry;
 
-// static void test_delete_entry_empty_key() {
-//   logger(4, "*** test_delete_entry_empty_key ***\n");
+  db_t *db_list = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db_list);
   
-//   db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
-//   TEST_ASSERT_NOT_NULL(db);
+  db_t *db_hash = create_db(KV_STORAGE_STRUCTURE_HASH);
+  TEST_ASSERT_NOT_NULL(db_hash);
+
+  TEST_ASSERT_EQUAL(-1, delete_entry(db_list, "nonexistent_key"));
+  TEST_ASSERT_EQUAL(-1, delete_entry(db_hash, "nonexistent_key"));
   
-//   int64_t result = delete_entry(db, "");
-//   TEST_ASSERT_EQUAL(-1, result);
+  free_db(db_list);
+  free_db(db_hash);
+}
+
+static void test_delete_entry_null_inputs() {
+  logger(4, "*** test_delete_entry_null_db ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
+
+  TEST_ASSERT_EQUAL(-1, delete_entry(NULL, "test_key"));
+  TEST_ASSERT_EQUAL(-1, delete_entry(db, NULL));
+
+  free_db(db);
+}
+
+static void test_delete_entry_empty_key() {
+  logger(4, "*** test_delete_entry_empty_key ***\n");
+  db_t *db = create_db(KV_STORAGE_STRUCTURE_LIST);
+  TEST_ASSERT_NOT_NULL(db);
+
+  TEST_ASSERT_EQUAL(-1, delete_entry(db, ""));
   
-//   free_db(db);
-// }
+  free_db(db);
+}
 
 // static void test_save_load_db_valid_list() {
 //   logger(4, "*** test_save_load_db_valid_list ***\n");
@@ -634,13 +628,12 @@ int64_t main() {
   RUN_TEST(test_get_entry_null_inputs);
   RUN_TEST(test_get_entry_empty_key);
   
-  // // delete_entry tests
-  // RUN_TEST(test_delete_entry_valid_list);
-  // RUN_TEST(test_delete_entry_valid_hash);
-  // RUN_TEST(test_delete_entry_nonexistent_key);
-  // RUN_TEST(test_delete_entry_null_db);
-  // RUN_TEST(test_delete_entry_null_key);
-  // RUN_TEST(test_delete_entry_empty_key);
+  // delete_entry tests
+  RUN_TEST(test_delete_entry_valid_list);
+  RUN_TEST(test_delete_entry_valid_hash);
+  RUN_TEST(test_delete_entry_nonexistent_key);
+  RUN_TEST(test_delete_entry_null_inputs);
+  RUN_TEST(test_delete_entry_empty_key);
   
   // // save_db and load_db tests
   // RUN_TEST(test_save_load_db_valid_list);
