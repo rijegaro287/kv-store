@@ -192,7 +192,7 @@ static void test_parse_entry_valid() {
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(INT32_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "42" VALUE_DELIMETER, line);
+                           "42" VALUE_DELIMETER "\n", line);
   free_entry(entry);
 }
 
@@ -205,55 +205,55 @@ static void test_parse_entry_all_types() {
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(INT8_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "42" VALUE_DELIMETER, line);
+                           "42" VALUE_DELIMETER "\n", line);
 
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "5889", INT16_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(INT16_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "5889" VALUE_DELIMETER, line);
+                           "5889" VALUE_DELIMETER "\n", line);
 
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "25763", INT32_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(INT32_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "25763" VALUE_DELIMETER, line);
+                           "25763" VALUE_DELIMETER "\n", line);
 
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "123812929", INT64_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(INT64_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "123812929" VALUE_DELIMETER, line);
+                           "123812929" VALUE_DELIMETER "\n", line);
 
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "1.1234567", FLOAT_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(FLOAT_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "1.1234567" VALUE_DELIMETER, line);
+                           "1.1234567" VALUE_DELIMETER "\n", line);
 
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "5.123456789123456", DOUBLE_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(DOUBLE_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "5.123456789123456" VALUE_DELIMETER, line);
+                           "5.123456789123456" VALUE_DELIMETER "\n", line);
 
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "true", BOOL_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(BOOL_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "true" VALUE_DELIMETER, line);
+                           "true" VALUE_DELIMETER "\n", line);
   
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "false", BOOL_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(BOOL_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "false" VALUE_DELIMETER, line);
+                           "false" VALUE_DELIMETER "\n", line);
   
   TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "String 1", STR_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
   TEST_ASSERT_EQUAL_STRING(STR_TYPE_STR TYPE_DELIMETER
                            "testkey" KEY_DELIMETER
-                           "String 1" VALUE_DELIMETER, line);
+                           "String 1" VALUE_DELIMETER "\n", line);
 
   free_entry(entry);
 }

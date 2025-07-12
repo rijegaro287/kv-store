@@ -335,12 +335,12 @@ extern int64_t parse_entry(db_entry_t *entry, uint8_t *dest, uint64_t max_len) {
     return -1;
   }
 
-  snprintf(dest, max_len, "%s%s%s%s%s%s", type,
-                                          KV_PARSER_TYPE_DELIMITER,
-                                          key,
-                                          KV_PARSER_KEY_DELIMITER,
-                                          value,
-                                          KV_PARSER_VALUE_DELIMITER);
+  snprintf(dest, max_len, "%s%s%s%s%s%s\n", type,
+                                            KV_PARSER_TYPE_DELIMITER,
+                                            key,
+                                            KV_PARSER_KEY_DELIMITER,
+                                            value,
+                                            KV_PARSER_VALUE_DELIMITER);
   return 0;
 }
 
