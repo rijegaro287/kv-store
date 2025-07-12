@@ -1,13 +1,5 @@
 #include "test_kv_controller.h"
 
-extern void setUp(void) {
-  // set stuff up here
-}
-
-extern void tearDown(void) {
-  // clean stuff up here
-}
-
 static void test_create_db_valid_inputs() {
   logger(4, "*** test_create_db_valid_inputs ***\n");
   db_t *db_list = create_db(KV_STORAGE_STRUCTURE_LIST);
@@ -532,7 +524,15 @@ static void test_long_strings() {
   free_db(db);
 }
 
-int64_t main() {
+extern void setUp(void) {
+  // set stuff up here
+}
+
+extern void tearDown(void) {
+  // clean stuff up here
+}
+
+extern int main() {
   UNITY_BEGIN();
   
   // create_db tests

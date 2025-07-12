@@ -580,7 +580,7 @@ extern void tearDown(void) {
   // clean stuff up here
 }
 
-extern int64_t main() {
+extern int main() {
   UNITY_BEGIN();
   
   // create_entry

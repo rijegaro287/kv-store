@@ -45,4 +45,4 @@ static void test_long_strings();
 
 extern void setUp(void);
 extern void tearDown(void);
-extern int64_t main();
+extern int main();

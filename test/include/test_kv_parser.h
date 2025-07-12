@@ -34,4 +34,4 @@ static void test_print_entry_invalid_type();
 
 extern void setUp(void);
 extern void tearDown(void);
-extern int64_t main();
+extern int main();
