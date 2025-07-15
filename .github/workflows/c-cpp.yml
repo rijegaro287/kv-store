@@ -25,10 +25,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y doxygen
-      - name: Run Doxygen 
+      - name: Run Doxygen
+        working-directory: ${{ github.workspace }}
         run: |
           ls ../ -la
-          doxygen ../Doxyfile
+          doxygen Doxyfile
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages Artifact
