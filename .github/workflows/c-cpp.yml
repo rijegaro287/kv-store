@@ -15,4 +15,6 @@ jobs:
           cmake ..
           make
       - name: test
-        run: ctest -V --output-on-failure
+        run: |
+          cd ./build
+          ctest -V --output-on-failure
