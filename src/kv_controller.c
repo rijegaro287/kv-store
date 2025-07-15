@@ -49,7 +49,7 @@ extern int64_t load_db(db_t *db, uint8_t *file_path) {
     return -1;
   }
   
-  FILE *db_file = fopen(file_path, "r");
+  FILE *db_file = fopen(file_path, "r+");
   if (db_file == NULL) {
     logger(3, "Error: Failed to read the database file.\n");
     return -1;
