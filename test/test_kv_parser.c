@@ -430,7 +430,7 @@ static void test_parse_line_malformed_entry() {
   TEST_ASSERT_NULL(entry);
   free_entry(entry);
 
-  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s", 
+  snprintf(line, BG_BUFFER_SIZE, "%s%s%s%s%s%s", 
            INT8_TYPE_STR, "*",
            "testkey", KEY_DELIMETER, 
            "42", VALUE_DELIMETER);

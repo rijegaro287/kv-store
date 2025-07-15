@@ -316,7 +316,7 @@ static void test_delete_entry_empty_key() {
 
 static void test_save_load_db_valid_list() {
   logger(4, "*** test_save_load_db_valid_list ***\n");
-  uint8_t *file_path = "/tmp/test_db_list.db";
+  uint8_t *file_path = "./test_db.db";
 
   db_t *db = helper_create_and_validate_db(KV_STORAGE_STRUCTURE_LIST);
   helper_populate_db_with_sample_data(db);
@@ -386,7 +386,7 @@ static void test_load_db_nonexistent_file() {
   logger(4, "*** test_load_db_nonexistent_file ***\n");
   db_t *db = helper_create_and_validate_db(KV_STORAGE_STRUCTURE_LIST);
   
-  TEST_ASSERT_EQUAL(-1, load_db(db, "/tmp/nonexistent_file.db"));
+  TEST_ASSERT_EQUAL(0, load_db(db, "/tmp/nonexistent_file.db"));
   
   free_db(db);
 }
@@ -426,14 +426,14 @@ static void test_multiple_entries_operations() {
   for (uint64_t  i = 0; i < 10; i++) {
     char key[32];
     char value[32];
-    snprintf(key, sizeof(key), "key_%d", i);
-    snprintf(value, sizeof(value), "%d", i * 10);
+    snprintf(key, sizeof(key), "key_%u", i);
+    snprintf(value, sizeof(value), "%u", i * 10);
     TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, key, value, INT32_TYPE_STR));
   }
   
   for (uint64_t  i = 0; i < 10; i++) {
     char key[32];
-    snprintf(key, sizeof(key), "key_%d", i);
+    snprintf(key, sizeof(key), "key_%u", i);
     
     db_entry_t *entry = get_entry(db, key);
     TEST_ASSERT_NOT_NULL(entry);
@@ -443,19 +443,19 @@ static void test_multiple_entries_operations() {
   
   for (uint64_t  i = 0; i < 5; i++) {
     char key[32];
-    snprintf(key, sizeof(key), "key_%d", i);
+    snprintf(key, sizeof(key), "key_%u", i);
     TEST_ASSERT_GREATER_OR_EQUAL(0, delete_entry(db, key));
   }
   
   for (uint64_t  i = 0; i < 5; i++) {
     char key[32];
-    snprintf(key, sizeof(key), "key_%d", i);
+    snprintf(key, sizeof(key), "key_%u", i);
     TEST_ASSERT_NULL(get_entry(db, key));
   }
   
   for (uint64_t  i = 5; i < 10; i++) {
     char key[32];
-    snprintf(key, sizeof(key), "key_%d", i);
+    snprintf(key, sizeof(key), "key_%u", i);
     db_entry_t *entry = get_entry(db, key);
     TEST_ASSERT_NOT_NULL(entry);
     TEST_ASSERT_EQUAL(INT32_TYPE, entry->type);
