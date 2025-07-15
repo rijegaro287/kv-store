@@ -155,7 +155,7 @@ extern int64_t put_entry(db_t *db, uint8_t *key, uint8_t *value, uint8_t *type) 
     return -1;
   }
 
-  if (strlen(key) == 0 || strlen(value) == 0 || strlen(type) == 0) {
+  if (strlen(key) == 0 || strlen(value) == 0) {
     logger(3, "Error: Empty string passed to put_entry\n");
     return -1;
   }

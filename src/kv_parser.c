@@ -215,12 +215,14 @@ extern int64_t update_entry(db_entry_t *entry, uint8_t* value, uint8_t* type) {
     return -1;
   }
   
-  if (strlen(value) == 0 || strlen(type) == 0) {
+  if (strlen(value) == 0) {
     logger(3, "Error: Empty string passed to update_entry\n");
     return -1;
   }
 
-  entry->type = map_datatype_from_str(type);
+  entry->type = strlen(type) > 0 ?
+                map_datatype_from_str(type) :
+                entry->type;
   if (entry->type < 0) {
     logger(3, "Error: Failed to map datatype\n");
     return -1;
