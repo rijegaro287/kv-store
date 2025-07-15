@@ -103,3 +103,17 @@ The delimiters for each parameter are defined in the ```KV_PARSER_TYPE_DELIMITER
 
 ## API Documentation
 Click [here](https://rijegaro287.github.io/kv-store/dir_d44c64559bbebec7f509842c48db8b23.html) to see a list of available header files and the functions they include.
+
+
+## Running Tests
+You can run unit tests by building the project and running ctest:
+
+```
+git clone https://github.com/rijegaro287/kv-store
+cd kv-store
+mkdir -p ./build
+cd ./build
+cmake ..
+make
+ctest --output-on-failure -V
+```
