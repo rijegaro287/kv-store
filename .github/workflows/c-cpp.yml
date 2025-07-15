@@ -26,8 +26,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y doxygen
       - name: Run Doxygen
-        working-directory: ${{ github.workspace }}
-        run: doxygen ${{ github.workspace }}/Doxyfile
+        uses: mattnotmitt/doxygen-action@v1
+        with:
+          doxyfile-path: './Doxyfile'
+          working-directory: '.'
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages Artifact
