@@ -26,7 +26,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y doxygen
       - name: Run Doxygen 
-        run: doxygen ./Doxyfile
+        run: |
+          pwd
+          doxygen ./Doxyfile -d
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages Artifact
