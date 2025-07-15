@@ -8,13 +8,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: build
+      - name: Build
         run: |
           mkdir -p ./build
           cd ./build
           cmake ..
           make
-      - name: test
+      - name: Test
         run: |
           cd ./build
           ctest -V --output-on-failure
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Doxygen
+        run: |
+          sudo apt-get update
+          sudp apt-get install -y doxygen graphviz
+      - name: Run Doxygen 
+        run: doxygen Doxyfile
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/html
