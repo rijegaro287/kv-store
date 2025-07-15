@@ -108,7 +108,7 @@ Click [here](https://rijegaro287.github.io/kv-store/dir_d44c64559bbebec7f509842c
 ## Running Tests
 You can run unit tests by building the project and running ctest:
 
-```
+```bash
 git clone https://github.com/rijegaro287/kv-store
 cd kv-store
 mkdir -p ./build
