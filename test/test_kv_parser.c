@@ -6,159 +6,6 @@ static db_entry_t* helper_create_and_validate_entry(uint8_t *key, uint8_t *value
   return entry;
 }
 
-static void helper_test_create_entry_null_inputs() {
-  TEST_ASSERT_NULL(create_entry(NULL, "42", INT32_TYPE_STR));
-  TEST_ASSERT_NULL(create_entry("key", NULL, INT32_TYPE_STR));
-  TEST_ASSERT_NULL(create_entry("key", "42", NULL));
-}
-
-static void helper_test_create_entry_invalid_inputs() {
-  TEST_ASSERT_NULL(create_entry("key", "42", "invalid_type"));
-  TEST_ASSERT_NULL(create_entry("key", "invalid_value", INT8_TYPE_STR));
-  TEST_ASSERT_NULL(create_entry("", "42", INT8_TYPE_STR));
-  TEST_ASSERT_NULL(create_entry("key", "", INT8_TYPE_STR));
-  TEST_ASSERT_NULL(create_entry("key", "42", ""));
-}
-
-static void helper_test_set_entry_value_all_types(db_entry_t *entry) {
-  entry->type = INT8_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "127"));
-  TEST_ASSERT_EQUAL(127, *(int8_t*)entry->value);
-  free(entry->value);
-  
-  entry->type = INT16_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "32767"));
-  TEST_ASSERT_EQUAL(32767, *(int16_t*)entry->value);
-  free(entry->value);
-  
-  entry->type = INT32_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "2147483647"));
-  TEST_ASSERT_EQUAL(2147483647, *(int32_t*)entry->value);
-  free(entry->value);
-  
-  entry->type = INT64_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "9223372036854775807"));
-  TEST_ASSERT_EQUAL(9223372036854775807LL, *(int64_t*)entry->value);
-  free(entry->value);
-  
-  entry->type = FLOAT_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "3.14"));
-  TEST_ASSERT_EQUAL(3.14, *(float*)entry->value);
-  free(entry->value);
-  
-  entry->type = DOUBLE_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "3.141592653589793"));
-  TEST_ASSERT_EQUAL(3.141592653589793, *(double*)entry->value);
-  free(entry->value);
-  
-  entry->type = BOOL_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "true"));
-  TEST_ASSERT_TRUE(*(bool*)entry->value);
-  free(entry->value);
-  
-  entry->type = BOOL_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "false"));
-  TEST_ASSERT_FALSE(*(bool*)entry->value);
-  free(entry->value);
-  
-  entry->type = STR_TYPE;
-  entry->value = NULL;
-  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "hello world"));
-  TEST_ASSERT_EQUAL_STRING("hello world", (char*)entry->value);
-}
-
-static void helper_test_update_entry_all_types(db_entry_t *entry) {
-  TEST_ASSERT_EQUAL_INT8(0, update_entry(entry, "121", INT8_TYPE_STR));
-  TEST_ASSERT_EQUAL_INT8(121, *(int8_t*)entry->value);
-
-  TEST_ASSERT_EQUAL_INT16(0, update_entry(entry, "1222", INT16_TYPE_STR));
-  TEST_ASSERT_EQUAL_INT16(1222, *(int16_t*)entry->value);
-
-  TEST_ASSERT_EQUAL_INT32(0, update_entry(entry, "57899", INT32_TYPE_STR));
-  TEST_ASSERT_EQUAL_INT32(57899, *(int32_t*)entry->value);
-
-  TEST_ASSERT_EQUAL_INT64(0, update_entry(entry, "8947381", INT64_TYPE_STR));
-  TEST_ASSERT_EQUAL_INT64(8947381, *(int64_t*)entry->value);
-
-  TEST_ASSERT_EQUAL_FLOAT(0, update_entry(entry, "124.21312", FLOAT_TYPE_STR));
-  TEST_ASSERT_EQUAL_FLOAT(124.21312, *(float*)entry->value);
-
-  TEST_ASSERT_EQUAL_DOUBLE(0, update_entry(entry, "1200.1202310", DOUBLE_TYPE_STR));
-  TEST_ASSERT_EQUAL_DOUBLE(1200.1202310, *(double*)entry->value);
-
-  TEST_ASSERT_EQUAL(0, update_entry(entry, "true", BOOL_TYPE_STR));
-  TEST_ASSERT_EQUAL(1, *(bool*)entry->value);
-
-  TEST_ASSERT_EQUAL(0, update_entry(entry, "false", BOOL_TYPE_STR));
-  TEST_ASSERT_EQUAL(0, *(bool*)entry->value);
-
-  TEST_ASSERT_EQUAL(0, update_entry(entry, "Buenos dias\n", STR_TYPE_STR));
-  TEST_ASSERT_EQUAL_STRING("Buenos dias\n", (int8_t*)entry->value);
-}
-
-static void helper_test_parse_entry_all_types(db_entry_t *entry, uint8_t *line) {
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(INT8_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "42" VALUE_DELIMETER "\n", line);
-
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "5889", INT16_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(INT16_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "5889" VALUE_DELIMETER "\n", line);
-
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "25763", INT32_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(INT32_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "25763" VALUE_DELIMETER "\n", line);
-
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "123812929", INT64_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(INT64_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "123812929" VALUE_DELIMETER "\n", line);
-
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "1.1234567", FLOAT_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(FLOAT_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "1.1234567" VALUE_DELIMETER "\n", line);
-
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "5.123456789123456", DOUBLE_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(DOUBLE_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "5.123456789123456" VALUE_DELIMETER "\n", line);
-
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "true", BOOL_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(BOOL_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "true" VALUE_DELIMETER "\n", line);
-  
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "false", BOOL_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(BOOL_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "false" VALUE_DELIMETER "\n", line);
-  
-  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "String 1", STR_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
-  TEST_ASSERT_EQUAL_STRING(STR_TYPE_STR TYPE_DELIMETER
-                           "testkey" KEY_DELIMETER
-                           "String 1" VALUE_DELIMETER "\n", line);
-}
-
 static void helper_test_parse_line_single_type(uint8_t *type_str, uint8_t *value, 
                                                int64_t  expected_type, void* expected_value, 
                                                uint8_t *assert_type) {
@@ -212,21 +59,71 @@ static void test_create_entry_valid_inputs() {
 
 static void test_create_entry_null_inputs() {
   logger(4, "*** test_create_entry_null_inputs ***\n");
-  helper_test_create_entry_null_inputs();
+  TEST_ASSERT_NULL(create_entry(NULL, "42", INT32_TYPE_STR));
+  TEST_ASSERT_NULL(create_entry("key", NULL, INT32_TYPE_STR));
+  TEST_ASSERT_NULL(create_entry("key", "42", NULL));
 }
 
 static void test_create_entry_invalid_inputs() {
   logger(4, "*** test_create_entry_invalid_inputs ***\n");
-  helper_test_create_entry_invalid_inputs();
+  TEST_ASSERT_NULL(create_entry("key", "42", "invalid_type"));
+  TEST_ASSERT_NULL(create_entry("key", "invalid_value", INT8_TYPE_STR));
+  TEST_ASSERT_NULL(create_entry("", "42", INT8_TYPE_STR));
+  TEST_ASSERT_NULL(create_entry("key", "", INT8_TYPE_STR));
+  TEST_ASSERT_NULL(create_entry("key", "42", ""));
 }
 
 static void test_set_entry_value_all_types() {
   logger(4, "*** test_set_entry_value_all_types ***\n");
   db_entry_t *entry = malloc(sizeof(db_entry_t));
 
-  helper_test_set_entry_value_all_types(entry);
-
-  free_entry(entry);
+  entry->type = INT8_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "127"));
+  TEST_ASSERT_EQUAL(127, *(int8_t*)entry->value);
+  free(entry->value);
+  
+  entry->type = INT16_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "32767"));
+  TEST_ASSERT_EQUAL(32767, *(int16_t*)entry->value);
+  free(entry->value);
+  
+  entry->type = INT32_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "2147483647"));
+  TEST_ASSERT_EQUAL(2147483647, *(int32_t*)entry->value);
+  free(entry->value);
+  
+  entry->type = INT64_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "9223372036854775807"));
+  TEST_ASSERT_EQUAL(9223372036854775807LL, *(int64_t*)entry->value);
+  free(entry->value);
+  
+  entry->type = FLOAT_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "3.14"));
+  TEST_ASSERT_EQUAL(3.14, *(float*)entry->value);
+  free(entry->value);
+  
+  entry->type = DOUBLE_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "3.141592653589793"));
+  TEST_ASSERT_EQUAL(3.141592653589793, *(double*)entry->value);
+  free(entry->value);
+  
+  entry->type = BOOL_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "true"));
+  TEST_ASSERT_TRUE(*(bool*)entry->value);
+  free(entry->value);
+  
+  entry->type = BOOL_TYPE;
+  entry->value = NULL;
+  TEST_ASSERT_EQUAL(0, set_entry_value(entry, "false"));
+  TEST_ASSERT_FALSE(*(bool*)entry->value);
+  free(entry->value);
 }
 
 static void test_set_entry_value_null_inputs() {
@@ -263,7 +160,29 @@ static void test_update_entry_all_types() {
   logger(4, "*** test_update_entry_all_types ***\n");
   db_entry_t *entry = helper_create_and_validate_entry("key", "42", INT8_TYPE_STR);
 
-  helper_test_update_entry_all_types(entry);
+  TEST_ASSERT_EQUAL_INT8(0, update_entry(entry, "121", INT8_TYPE_STR));
+  TEST_ASSERT_EQUAL_INT8(121, *(int8_t*)entry->value);
+
+  TEST_ASSERT_EQUAL_INT16(0, update_entry(entry, "1222", INT16_TYPE_STR));
+  TEST_ASSERT_EQUAL_INT16(1222, *(int16_t*)entry->value);
+
+  TEST_ASSERT_EQUAL_INT32(0, update_entry(entry, "57899", INT32_TYPE_STR));
+  TEST_ASSERT_EQUAL_INT32(57899, *(int32_t*)entry->value);
+
+  TEST_ASSERT_EQUAL_INT64(0, update_entry(entry, "8947381", INT64_TYPE_STR));
+  TEST_ASSERT_EQUAL_INT64(8947381, *(int64_t*)entry->value);
+
+  TEST_ASSERT_EQUAL_FLOAT(0, update_entry(entry, "124.21312", FLOAT_TYPE_STR));
+  TEST_ASSERT_EQUAL_FLOAT(124.21312, *(float*)entry->value);
+
+  TEST_ASSERT_EQUAL_DOUBLE(0, update_entry(entry, "1200.1202310", DOUBLE_TYPE_STR));
+  TEST_ASSERT_EQUAL_DOUBLE(1200.1202310, *(double*)entry->value);
+
+  TEST_ASSERT_EQUAL(0, update_entry(entry, "true", BOOL_TYPE_STR));
+  TEST_ASSERT_EQUAL(1, *(bool*)entry->value);
+
+  TEST_ASSERT_EQUAL(0, update_entry(entry, "false", BOOL_TYPE_STR));
+  TEST_ASSERT_EQUAL(0, *(bool*)entry->value);
 
   free_entry(entry);
 }
@@ -311,7 +230,52 @@ static void test_parse_entry_all_types() {
   memset(line, '\0', BG_BUFFER_SIZE);
 
   db_entry_t *entry = helper_create_and_validate_entry("testkey", "42", INT8_TYPE_STR);
-  helper_test_parse_entry_all_types(entry, line);
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(INT8_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "42" VALUE_DELIMETER "\n", line);
+
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "5889", INT16_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(INT16_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "5889" VALUE_DELIMETER "\n", line);
+
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "25763", INT32_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(INT32_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "25763" VALUE_DELIMETER "\n", line);
+
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "123812929", INT64_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(INT64_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "123812929" VALUE_DELIMETER "\n", line);
+
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "1.1234567", FLOAT_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(FLOAT_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "1.1234567" VALUE_DELIMETER "\n", line);
+
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "5.123456789123456", DOUBLE_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(DOUBLE_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "5.123456789123456" VALUE_DELIMETER "\n", line);
+
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "true", BOOL_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(BOOL_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "true" VALUE_DELIMETER "\n", line);
+  
+  TEST_ASSERT_GREATER_OR_EQUAL(0, update_entry(entry, "false", BOOL_TYPE_STR));
+  TEST_ASSERT_GREATER_OR_EQUAL(0, parse_entry(entry, line, BG_BUFFER_SIZE));
+  TEST_ASSERT_EQUAL_STRING(BOOL_TYPE_STR TYPE_DELIMETER
+                           "testkey" KEY_DELIMETER
+                           "false" VALUE_DELIMETER "\n", line);
 
   free_entry(entry);
 }
@@ -394,9 +358,6 @@ static void test_parse_line_all_types() {
   
   bool val_bool_false = false;
   helper_test_parse_line_single_type(BOOL_TYPE_STR, "false", BOOL_TYPE, &val_bool_false, "bool");
-  
-  char val_string[] = "Hello World";
-  helper_test_parse_line_single_type(STR_TYPE_STR, "Hello World", STR_TYPE, val_string, "string");
 }
 
 static void test_parse_line_comment_line() {
@@ -502,7 +463,8 @@ static void test_free_entry_null() {
   free_entry(NULL);
 }
 
-static void helper_test_print_entry_all_types() {
+static void test_print_entry_all_types() {
+  logger(4, "*** test_print_entry_all_types ***\n");
   db_entry_t *entry;
   
   entry = helper_create_and_validate_entry("key", "42", INT8_TYPE_STR);
@@ -532,15 +494,6 @@ static void helper_test_print_entry_all_types() {
   entry = helper_create_and_validate_entry("key", "3.14159", DOUBLE_TYPE_STR);
   print_entry(entry);
   free_entry(entry);
-  
-  entry = helper_create_and_validate_entry("key", "hello", STR_TYPE_STR);
-  print_entry(entry);
-  free_entry(entry);
-}
-
-static void test_print_entry_all_types() {
-  logger(4, "*** test_print_entry_all_types ***\n");
-  helper_test_print_entry_all_types();
 }
 
 static void test_print_entry_null_input() {

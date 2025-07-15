@@ -14,7 +14,6 @@
 #define FLOAT_TYPE_STR "float"
 #define DOUBLE_TYPE_STR "double"
 #define BOOL_TYPE_STR "bool"
-#define STR_TYPE_STR "string"
 
 enum ENTRY_VALUE_TYPE {
   INT8_TYPE,
@@ -23,8 +22,7 @@ enum ENTRY_VALUE_TYPE {
   INT64_TYPE,
   FLOAT_TYPE,
   DOUBLE_TYPE,
-  BOOL_TYPE,
-  STR_TYPE
+  BOOL_TYPE
 };
 
 extern int64_t map_datatype_from_str(uint8_t *type);

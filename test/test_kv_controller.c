@@ -34,7 +34,6 @@ static void helper_test_empty_key(int64_t  (*func)(db_t*, uint8_t*), int64_t  ex
 static void helper_populate_db_with_sample_data(db_t *db) {
   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key1", "42", INT32_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key2", "3.14", FLOAT_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "key3", "hello", STR_TYPE_STR));
 }
 
 static void helper_validate_sample_data(db_t *db) {
@@ -47,11 +46,6 @@ static void helper_validate_sample_data(db_t *db) {
   TEST_ASSERT_NOT_NULL(entry2);
   TEST_ASSERT_EQUAL(FLOAT_TYPE, entry2->type);
   TEST_ASSERT_EQUAL_FLOAT(3.14, *(float*)entry2->value);
-  
-  db_entry_t *entry3 = get_entry(db, "key3");
-  TEST_ASSERT_NOT_NULL(entry3);
-  TEST_ASSERT_EQUAL(STR_TYPE, entry3->type);
-  TEST_ASSERT_EQUAL_STRING("hello", (char*)entry3->value);
 }
 
 static void helper_test_put_entry_all_types(db_t *db) {
@@ -62,7 +56,6 @@ static void helper_test_put_entry_all_types(db_t *db) {
   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "float_key", "3.14", FLOAT_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "double_key", "3.141592653589793", DOUBLE_TYPE_STR));
   TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "bool_key", "true", BOOL_TYPE_STR));
-  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, "string_key", "hello world", STR_TYPE_STR));
 }
 
 static void helper_test_both_storage_types(void (*test_func)(db_t*)) {
@@ -472,28 +465,6 @@ static void test_multiple_entries_operations() {
   free_db(db);
 }
 
-static void test_long_strings() {
-  logger(4, "*** test_long_strings ***\n");
-  db_t *db = helper_create_and_validate_db(KV_STORAGE_STRUCTURE_LIST);
-  
-  uint8_t long_key[SM_BUFFER_SIZE];
-  memset(long_key, 'a', SM_BUFFER_SIZE-1);
-  long_key[SM_BUFFER_SIZE-1] = '\0';
-  
-  uint8_t long_value[BG_BUFFER_SIZE];
-  memset(long_value, 'b', BG_BUFFER_SIZE-1);
-  long_value[BG_BUFFER_SIZE-1] = '\0';
-  
-  TEST_ASSERT_GREATER_OR_EQUAL(0, put_entry(db, long_key, long_value, STR_TYPE_STR));
-  
-  db_entry_t *entry = get_entry(db, long_key);
-  TEST_ASSERT_NOT_NULL(entry);
-  TEST_ASSERT_EQUAL(STR_TYPE, entry->type);
-  TEST_ASSERT_EQUAL_STRING(long_value, (uint8_t*)entry->value);
-  
-  free_db(db);
-}
-
 extern void setUp(void) {
   // set stuff up here
 }
@@ -555,7 +526,6 @@ extern int main() {
   
   // Integration and edge case tests
   RUN_TEST(test_multiple_entries_operations);
-  RUN_TEST(test_long_strings);
   
   return UNITY_END();
 }

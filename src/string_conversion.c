@@ -18,7 +18,6 @@ extern int64_t map_datatype_from_str(uint8_t *type) {
   else if (strcmp(type, FLOAT_TYPE_STR) == 0) return FLOAT_TYPE;
   else if (strcmp(type, DOUBLE_TYPE_STR) == 0) return DOUBLE_TYPE;
   else if (strcmp(type, BOOL_TYPE_STR) == 0) return BOOL_TYPE;
-  else if (strcmp(type, STR_TYPE_STR) == 0) return STR_TYPE;
   else {
     logger(3, "Error: data type %s is not a valid datatype.\n", type);
     return -1;
@@ -52,9 +51,6 @@ extern int64_t map_datatype_to_str(uint64_t type, uint8_t *dest, uint64_t max_le
     break;
   case BOOL_TYPE:
     strncpy(dest, BOOL_TYPE_STR, max_len);
-    break;
-  case STR_TYPE:
-    strncpy(dest, STR_TYPE_STR, max_len);
     break;
   default:
     return -1;
@@ -90,9 +86,6 @@ extern int64_t map_value_to_str(uint64_t type, void *value, uint8_t *dest, uint6
     break;
     case BOOL_TYPE:
     snprintf(dest, max_len, "%s", *(bool*)value ? "true" : "false");
-    break;
-      case STR_TYPE:
-    snprintf(dest, max_len, "%s", (uint8_t*)value);
     break;
   default:
     return -1;

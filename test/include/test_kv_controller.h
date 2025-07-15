@@ -55,7 +55,6 @@ static void test_free_db_null();
 static void test_print_db_valid();
 static void test_print_db_null();
 static void test_multiple_entries_operations();
-static void test_long_strings();
 
 extern void setUp(void);
 extern void tearDown(void);

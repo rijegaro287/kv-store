@@ -192,9 +192,6 @@ extern int64_t set_entry_value(db_entry_t *dest, uint8_t *str_value) {
   case BOOL_TYPE:
     result = set_bool_value(dest, str_value);
     break;
-  case STR_TYPE:
-    result = set_string_value(dest, str_value);
-    break;
   default:
     logger(3, "Error: data type %ld is not a valid datatype.\n", dest->type);
     result = -1;
@@ -388,9 +385,6 @@ extern void print_entry(db_entry_t *entry) {
     break;
   case DOUBLE_TYPE:
     logger(4, "%.15lf\n", *(double*)entry->value);
-    break;
-  case STR_TYPE:
-    logger(4, "%s\n", (uint8_t*)entry->value);
     break;
   default:
     logger(3, "\nError: Invalid Data Type\n");
