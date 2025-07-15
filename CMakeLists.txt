@@ -37,7 +37,7 @@ add_library(kv_store STATIC ${SOURCES} ${HEADERS})
 
 target_include_directories(kv_store PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(kv_store PRIVATE logger)
+target_link_libraries(kv_store PUBLIC logger)
 
 
 set(TEST_CONTROLLER ${CMAKE_CURRENT_SOURCE_DIR}/test/test_kv_controller.c
