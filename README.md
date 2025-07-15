@@ -1,4 +1,4 @@
-# kv-store
+# Get started
 
 A simple C library aimed to store and manage key-value pairs in a plain-text file.
 
