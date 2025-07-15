@@ -386,7 +386,7 @@ static void test_load_db_nonexistent_file() {
   logger(4, "*** test_load_db_nonexistent_file ***\n");
   db_t *db = helper_create_and_validate_db(KV_STORAGE_STRUCTURE_LIST);
   
-  TEST_ASSERT_EQUAL(0, load_db(db, "/tmp/nonexistent_file.db"));
+  TEST_ASSERT_EQUAL(-1, load_db(db, "/tmp/nonexistent_file.db"));
   
   free_db(db);
 }
