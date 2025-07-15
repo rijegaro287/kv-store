@@ -100,3 +100,6 @@ if (save_db(db, "test.db") < 0) {
 Each entry is stored using this default format ```<datatype>:<key>=<value>;```
 
 The delimiters for each parameter are defined in the ```KV_PARSER_TYPE_DELIMITER```, ```KV_PARSER_KEY_DELIMITER``` and ```KV_PARSER_VALUE_DELIMITER``` constants.
+
+## API Documentation
+Click [here](https://rijegaro287.github.io/kv-store/dir_d44c64559bbebec7f509842c48db8b23.html) to see a list of available header files and the functions they include.
