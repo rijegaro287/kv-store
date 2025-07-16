@@ -73,3 +73,9 @@ add_test(NAME test_kv_parser
 add_test(NAME test_kv_controller
          COMMAND test_kv_controller
          WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_compile_options(test_kv_parser PRIVATE -fsanitize=address)
+target_link_options(test_kv_parser PRIVATE -fsanitize=address)
+
+target_compile_options(test_kv_controller PRIVATE -fsanitize=address)
+target_link_options(test_kv_controller PRIVATE -fsanitize=address)
