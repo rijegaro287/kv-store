@@ -265,7 +265,7 @@ extern void print_db(db_t *db) {
     logger(3, "Error: NULL pointer passed to print_db\n");
     return;
   }
-  printf("==============================\n");
+  printf("==================================================\n");
   if (strcmp(db->storage_type, KV_STORAGE_STRUCTURE_LIST) == 0) {
     list_print((list_t*)db->storage);
   }
@@ -275,5 +275,5 @@ extern void print_db(db_t *db) {
   else {
     logger(3, "Error: Invalid storage structure\n");
   }
-  printf("==============================\n");
+  printf("==================================================\n");
 }

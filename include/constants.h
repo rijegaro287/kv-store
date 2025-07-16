@@ -1,5 +1,3 @@
-#pragma once
-
 /**
  * @file constants.h
  * @brief Global constants and configuration values for the key-value store
@@ -7,6 +5,8 @@
  * This header defines all the constant values used throughout the key-value store
  * system, including buffer sizes, delimiters, and storage configuration parameters.
  */
+#pragma once
+
 
 #define BG_BUFFER_SIZE 128
 #define SM_BUFFER_SIZE 32

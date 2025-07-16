@@ -1,9 +1,3 @@
-#pragma once
-
-#include "kv_parser.h"
-#include "linked_list.h"
-#include "hash_table.h"
-
 /** 
  * @file kv_controller.h
  * @brief Controller for managing key-value database operations
@@ -11,6 +5,12 @@
  * This header provides functions to create, manipulate, and manage a key-value
  * database using either a linked list or a hash table for storage.
  */
+#pragma once
+
+#include "kv_parser.h"
+#include "linked_list.h"
+#include "hash_table.h"
+
 
 /**
  * @brief Database structure representing a key-value store

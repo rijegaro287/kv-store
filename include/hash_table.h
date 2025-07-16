@@ -1,7 +1,3 @@
-#pragma once
-
-#include "linked_list.h"
-
 /**
  * @file hash_table.h
  * @brief Hash table implementation for key-value store storage backend
@@ -11,6 +7,10 @@
  * fast O(1) average-case access times through hash-based indexing with chaining
  * for collision resolution.
  */
+#pragma once
+
+#include "linked_list.h"
+
 
 /**
  * @brief Hash table structure for storing database entries

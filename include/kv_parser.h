@@ -1,9 +1,3 @@
-#pragma once
-
-#include "string_conversion.h"
-#include "logger.h"
-#include "constants.h"
-
 /**
  * @file kv_parser.h
  * @brief Key-value parser for database entries with type-safe value handling
@@ -11,6 +5,11 @@
  * This module provides functionality to parse, create, and manipulate database
  * entries with strongly-typed values including integers, floats, booleans, and strings.
  */
+#pragma once
+
+#include "string_conversion.h"
+#include "logger.h"
+#include "constants.h"
 
 /** @brief Delimiter used to separate type from key in serialized format */
 #define TYPE_DELIMETER KV_PARSER_TYPE_DELIMITER

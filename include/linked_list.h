@@ -1,8 +1,3 @@
-#pragma once
-
-#include "kv_parser.h"
-#include "logger.h"
-
 /**
  * @file linked_list.h
  * @brief Linked list implementation for key-value store storage backend
@@ -11,6 +6,11 @@
  * It serves as one of the storage backends for the key-value database, offering
  * sequential access and dynamic sizing capabilities.
  */
+#pragma once
+
+#include "kv_parser.h"
+#include "logger.h"
+
 
 /**
  * @brief Node structure for the linked list

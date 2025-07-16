@@ -1,3 +1,10 @@
+/**
+ * @file string_conversion.h
+ * @brief String conversion utilities for type-safe value handling in the key-value store
+ * 
+ * This module provides functions to convert between string representations and typed values,
+ * as well as type mapping utilities for the database entry system.
+ */
 #pragma once
 
 #include <stdlib.h>
@@ -7,13 +14,6 @@
 
 #include "logger.h"
 
-/**
- * @file string_conversion.h
- * @brief String conversion utilities for type-safe value handling in the key-value store
- * 
- * This module provides functions to convert between string representations and typed values,
- * as well as type mapping utilities for the database entry system.
- */
 
 #define INT8_TYPE_STR "int8"
 #define INT16_TYPE_STR "int16"
