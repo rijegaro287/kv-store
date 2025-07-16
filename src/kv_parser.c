@@ -193,7 +193,7 @@ extern int64_t set_entry_value(db_entry_t *dest, uint8_t *str_value) {
     result = set_bool_value(dest, str_value);
     break;
   default:
-    logger(3, "Error: data type %ld is not a valid datatype.\n", dest->type);
+    logger(3, "Error: data type %u is not a valid datatype.\n", dest->type);
     result = -1;
     break;
   }
@@ -253,12 +253,23 @@ extern db_entry_t* create_entry(uint8_t *key, uint8_t *value, uint8_t *type) {
     return NULL;
   }
   
-  entry->type = map_datatype_from_str(type);
   entry->value = NULL;
+
   strncpy(entry->key, key, SM_BUFFER_SIZE);
   entry->key[SM_BUFFER_SIZE-1] = '\0';
+  
+  entry->type = strlen(type) > 0 ?
+                map_datatype_from_str(type) :
+                entry->type;
+  if (entry->type < 0) {
+    logger(3, "Error: Failed to map datatype\n");
+    free_entry(entry);
+    return NULL;
+  }
+
   if (set_entry_value(entry, value) < 0) {
-    logger(3, "Error: Failed to create entry with key \"%s\"\n", key);
+    logger(3, "Error: Failed to set entry value for key \"%s\"\n", key);
+    free_entry(entry);
     return NULL;
   }
 

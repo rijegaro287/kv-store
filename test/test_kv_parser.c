@@ -82,48 +82,58 @@ static void test_set_entry_value_all_types() {
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "127"));
   TEST_ASSERT_EQUAL(127, *(int8_t*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = INT16_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "32767"));
   TEST_ASSERT_EQUAL(32767, *(int16_t*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = INT32_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "2147483647"));
   TEST_ASSERT_EQUAL(2147483647, *(int32_t*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = INT64_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "9223372036854775807"));
   TEST_ASSERT_EQUAL(9223372036854775807LL, *(int64_t*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = FLOAT_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "3.14"));
   TEST_ASSERT_EQUAL(3.14, *(float*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = DOUBLE_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "3.141592653589793"));
   TEST_ASSERT_EQUAL(3.141592653589793, *(double*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = BOOL_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "true"));
   TEST_ASSERT_TRUE(*(bool*)entry->value);
   free(entry->value);
+  entry->value = NULL;
   
   entry->type = BOOL_TYPE;
   entry->value = NULL;
   TEST_ASSERT_EQUAL(0, set_entry_value(entry, "false"));
   TEST_ASSERT_FALSE(*(bool*)entry->value);
   free(entry->value);
+  entry->value = NULL;
+  
+  free_entry(entry);
 }
 
 static void test_set_entry_value_null_inputs() {
